@@ -12,6 +12,7 @@ namespace Bot.Utilities.Processed.FieldInfo
 
         public FieldInfo(rlbot.flat.FieldInfo fieldInfo)
         {
+            //ayyyy
             Goals = new GoalInfo[fieldInfo.GoalsLength];
             BoostPads = new BoostPad[fieldInfo.BoostPadsLength];
 

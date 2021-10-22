@@ -1,6 +1,6 @@
-# RLBotCSharpExample
+# RedUtilities
 
-Example/template of a Rocket League bot implemented in C#
+A set of utitilies for making rocket league bots in C#
 
 ## Usage Instructions
 

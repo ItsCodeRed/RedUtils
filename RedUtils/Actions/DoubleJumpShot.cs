@@ -64,7 +64,7 @@ namespace RedUtils
 			// Predicts the ball's state after contact
 			Ball ballAfterHit = Slice.ToBall();
 			Vec3 carFinVel = (((init ? Slice.Location : TargetLocation) - car.Location) / timeRemaining).Cap(0, 2300);
-			ballAfterHit.velocity = (carFinVel + Slice.Velocity) / 2;
+			ballAfterHit.velocity = (carFinVel * 6 + Slice.Velocity) / 7;
 
 			// Predicts how long it will take the ball to hit the target after being hit
 			Vec3 directionToScore = Slice.Location.FlatDirection(ShotTarget);
@@ -72,10 +72,11 @@ namespace RedUtils
 			float timeToScore = Slice.Location.FlatDist(ShotTarget) / Utils.Cap(velocityDiff * Utils.ShotPowerModifier(velocityDiff) + ballAfterHit.velocity.Dot(directionToScore), 500, Ball.MaxSpeed);
 
 			// Calculates the shot direction, and target location
+			ballAfterHit.velocity = (carFinVel + Slice.Velocity * 2) / 3;
 			ShotDirection = ballAfterHit.PredictLocation(timeToScore).Direction(ShotTarget);
 			float angle = MathF.Min(MathF.Asin(ShotDirection.z), MathF.PI * 0.35f);
 			ShotDirection = ShotDirection.FlatNorm() * MathF.Cos(angle) + Vec3.Up * MathF.Sin(angle);
-			TargetLocation = Slice.Location - ShotDirection * 150;
+			TargetLocation = Slice.Location - ShotDirection * 160;
 
 			// Gets the closest surface to the target location, and get that surface's normal
 			Surface surface = Field.NearestSurface(Slice.Location);
@@ -85,9 +86,9 @@ namespace RedUtils
 			float distFromSurface = surface.Limit(TargetLocation).Dist(TargetLocation);
 			if (distFromSurface < 50)
 			{
-				angle = MathF.Asin(Utils.Cap((distFromSurface - 50) / 150, -1, 1));
+				angle = MathF.Asin(Utils.Cap((distFromSurface - 50) / 160, -1, 1));
 				ShotDirection = ShotDirection.FlatNorm(normal) * MathF.Cos(angle) + normal * MathF.Sin(angle);
-				TargetLocation = Slice.Location - ShotDirection * 150;
+				TargetLocation = Slice.Location - ShotDirection * 160;
 			}
 
 			if (init)
@@ -205,7 +206,7 @@ namespace RedUtils
 			float timeRemaining = Slice.Time - Game.Time;
 
 			// Returns true if the height of the ball is not to low, or to high, and we can get there in time
-			return Drive.GetEta(car, TargetLocation.Flatten()) < timeRemaining && TargetLocation.z >= 300 && TargetLocation.z < 520 && timeRemaining > Utils.TimeToJump(Vec3.Up, TargetLocation.z, true);
+			return Drive.GetEta(car, TargetLocation.Flatten()) < timeRemaining && TargetLocation.z >= 300 && TargetLocation.z < 510 && timeRemaining > Utils.TimeToJump(Vec3.Up, TargetLocation.z, true);
 		}
 	}
 }

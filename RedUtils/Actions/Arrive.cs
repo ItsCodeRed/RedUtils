@@ -37,7 +37,7 @@ namespace RedUtils
 			Target = target;
 			Direction = direction;
 			ArrivalTime = -1;
-			AllowFlipping = false;
+			AllowFlipping = true;
 			Drive = new Drive(car, Target, 2300, AllowFlipping, false);
 			RecoveryTime = 0;
 		}
@@ -51,7 +51,7 @@ namespace RedUtils
 			Target = target;
 			Direction = Vec3.Zero;
 			ArrivalTime = arrivalTime;
-			AllowFlipping = false;
+			AllowFlipping = true;
 			Drive = new Drive(car, Target, 2300, AllowFlipping, true);
 			RecoveryTime = 0;
 		}
@@ -66,7 +66,7 @@ namespace RedUtils
 			Target = target;
 			Direction = direction;
 			ArrivalTime = arrivalTime;
-			AllowFlipping = false;
+			AllowFlipping = true;
 			Drive = new Drive(car, Target, 2300, AllowFlipping, true);
 			RecoveryTime = 0;
 		}

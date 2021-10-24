@@ -42,7 +42,7 @@ namespace RedUtils
 			if (_startTime < 0)
 			{
 				// During the first frame, calculate the angle we need to turn before dodging
-				float angle = 0.145f * bot.Me.Velocity.Length() / 600;
+				float angle = 0.09f * bot.Me.Velocity.Dot(bot.Me.Forward) / Drive.TurnRadius(bot.Me.Velocity.Dot(bot.Me.Forward));
 				// Generate a left and right vector rotated by that angle for us to aim at
 				Vec3 leftVec = Direction.Rotate(angle).Flatten().Normalize();
 				Vec3 rightVec = Direction.Rotate(-angle).Flatten().Normalize();
@@ -52,7 +52,7 @@ namespace RedUtils
 					// If we start to the left of the direction, angle to the left
 					bot.AimAt(bot.Me.Location + leftVec);
 
-					if (bot.Me.Velocity.Angle(leftVec) < 0.05)
+					if (bot.Me.Velocity.FlatAngle(leftVec) < 0.05f)
 					{
 						// When we are driving in the right direction, start the flip
 						_startTime = Game.Time;
@@ -64,7 +64,7 @@ namespace RedUtils
 					// If we start to the right of the direction, angle to the right
 					bot.AimAt(bot.Me.Location + rightVec);
 
-					if (bot.Me.Velocity.Angle(rightVec) < 0.05)
+					if (bot.Me.Velocity.FlatAngle(rightVec) < 0.05f)
 					{
 						// When we are driving in the right direction, start the flip
 						_startTime = Game.Time;
@@ -76,32 +76,32 @@ namespace RedUtils
 			{
 				float elapsed = Game.Time - _startTime;
 
-				if (0 < elapsed && elapsed < .12)
+				if (0 < elapsed && elapsed < .1)
 				{
-					// During the first .12 seconds, jump
+					// During the first .1 seconds, jump
 					bot.Controller.Jump = true;
 				}
-				else if (.15 < elapsed && elapsed < .25)
+				else if (.12 < elapsed && elapsed < .15)
 				{
-					// After waiting .03 seconds, dodge in the specified direction
+					// After waiting .02 seconds, dodge in the specified direction
 					bot.Controller.Jump = true;
 					bot.Controller.Pitch = -1;
 					bot.Controller.Roll = _side;
 				}
-				else if (.25 < elapsed && elapsed < .9)
+				else if (.15 < elapsed && elapsed < .65)
 				{
 					// Cancel the forward part of the dodge, and continue air rolling
 					bot.Controller.Pitch = 1;
 					bot.Controller.Roll = _side;
 				}
-				else if (.9 < elapsed && elapsed < 1.1)
+				else if (.65 < elapsed && elapsed < 0.9)
 				{
 					// Land safely on the ground by turning slightly and holding drift
 					bot.Controller.Pitch = 1;
 					bot.Controller.Handbrake = true;
 					bot.Controller.Yaw = _side;
 				}
-				else if (1.1 < elapsed)
+				else if (0.9 < elapsed)
 				{
 					// Finish the speed-flip
 					Finished = true;

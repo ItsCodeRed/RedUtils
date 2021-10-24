@@ -62,7 +62,7 @@ namespace RedUtils
 			// Predicts the ball's state after contact
 			Ball ballAfterHit = Slice.ToBall();
 			Vec3 carFinVel = (((init ? Slice.Location : TargetLocation) - car.Location).Flatten(normal) / timeRemaining).Cap(0, 2300);
-			ballAfterHit.velocity = (carFinVel + Slice.Velocity) / 2;
+			ballAfterHit.velocity = (carFinVel * 6 + Slice.Velocity) / 7;
 
 			// Predicts how long it will take the ball to hit the target after being hit
 			Vec3 directionToScore = Slice.Location.FlatDirection(ShotTarget);
@@ -70,6 +70,7 @@ namespace RedUtils
 			float timeToScore = Slice.Location.FlatDist(ShotTarget) / Utils.Cap(velocityDiff * Utils.ShotPowerModifier(velocityDiff) + ballAfterHit.velocity.Dot(directionToScore), 500, Ball.MaxSpeed);
 
 			// Calculates the shot direction, and target location
+			ballAfterHit.velocity = (carFinVel + Slice.Velocity * 2) / 3;
 			ShotDirection = ballAfterHit.PredictLocation(timeToScore).Direction(ShotTarget);
 			TargetLocation = Slice.Location - ShotDirection * 120;
 
@@ -116,7 +117,7 @@ namespace RedUtils
 			float eta = ArriveAction.Eta(bot.Me);
 
 			_updateTimer += bot.DeltaTime;
-			if (Interruptible && timeRemaining > 0.25f && (timeRemaining < 0 || (_leftGround && bot.Me.IsGrounded) || !ShotValid() || bot.Me.Boost > _startBoostAmount ||
+			if (Interruptible && (timeRemaining < 0 || (_leftGround && bot.Me.IsGrounded) || !ShotValid() || bot.Me.Boost > _startBoostAmount ||
 				eta > MathF.Max(timeRemaining * 1.05f, timeRemaining + 0.025f) || (eta < timeRemaining - 0.25f && _updateTimer > _updateInterval)))
 			{
 				// If this shot is no longer valid, or we think it's possible that a better shot exists, we finish this action

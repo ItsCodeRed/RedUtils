@@ -32,6 +32,14 @@ namespace RedUtils
 			return (b - a) * t + a;
 		}
 
+		/// <summary>Linerally interpolates between vectors a and b, using value t
+		/// <para>For instance, if t == 0, a is returned. If t == 1, b is returned</para>
+		/// </summary>
+		public static Vec3 Lerp(float t, Vec3 a, Vec3 b)
+		{
+			return (b - a) * t + a;
+		}
+
 		/// <summary>Inverse linerally interpolates between values a and b, using value v
 		/// <para>For instance, if v == a, 0 is returned. If v == b, 1 is returned. And if v is half way between a and b, 0.5 is returned</para>
 		/// </summary>

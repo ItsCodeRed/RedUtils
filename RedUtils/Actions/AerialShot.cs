@@ -74,7 +74,7 @@ namespace RedUtils
 			// Predicts the ball's state after contact
 			Ball ballAfterHit = Slice.ToBall();
 			Vec3 carFinVel = ((Slice.Location - car.Location) / timeRemaining).Cap(0, 2300);
-			ballAfterHit.velocity = (carFinVel + Slice.Velocity) / 2;
+			ballAfterHit.velocity = (carFinVel * 6 + Slice.Velocity) / 7;
 
 			// Predicts how long it will take the ball to hit the target after being hit
 			Vec3 directionToScore = Slice.Location.FlatDirection(ShotTarget);
@@ -82,6 +82,7 @@ namespace RedUtils
 			float timeToScore = Slice.Location.FlatDist(ShotTarget) / Utils.Cap(velocityDiff * Utils.ShotPowerModifier(velocityDiff) + ballAfterHit.velocity.Dot(directionToScore), 500, Ball.MaxSpeed);
 
 			// Calculates the shot direction, and target location
+			ballAfterHit.velocity = (carFinVel + Slice.Velocity * 2) / 3;
 			ShotDirection = ballAfterHit.PredictLocation(timeToScore).Direction(ShotTarget);
 			TargetLocation = Slice.Location - ShotDirection * 160;
 
@@ -188,7 +189,7 @@ namespace RedUtils
 				}
 
 				// If the aerial is finished, or is no longer possible, stop it
-				if (timeRemaining <= 0f || (_jumped && offset.Length() > 50 && (bot.Me.Boost == 0 || requiredAccel * 0.8f > (Car.BoostAccel + Car.AirThrottleAccel))) || (!ShotValid() && timeRemaining > 0.5f))
+				if (timeRemaining <= 0f || (_jumped && offset.Length() > 50 && requiredAccel * 0.8f > Car.AirThrottleAccel && (bot.Me.Boost == 0 || requiredAccel * 0.8f > (Car.BoostAccel + Car.AirThrottleAccel))) || (!ShotValid() && timeRemaining > 0.5f) || (bot.Me.IsGrounded && _jumped))
 				{
 					Finished = true;
 				}

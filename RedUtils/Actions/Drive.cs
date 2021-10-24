@@ -46,7 +46,7 @@ namespace RedUtils
 
 			// Only go backwards under very specific circumstances, because otherwise the bot goes backwards far too often
 			Backwards = backwardsEta + 0.5f < forwardsEta && car.Forward.Dot(car.Velocity) < 500 && car.Forward.FlatAngle(car.Location.Direction(target), car.Up) > MathF.PI * 0.6f;
-			AllowDodges = false;
+			AllowDodges = true;
 			WasteBoost = false;
 
 			Action = null;
@@ -68,7 +68,7 @@ namespace RedUtils
 
 			// Only go backwards under very specific circumstances, because otherwise the bot goes backwards far too often
 			Backwards = backwardsEta + 0.5f < forwardsEta && car.Forward.Dot(car.Velocity) < 500 && car.Forward.FlatAngle(car.Location.Direction(target), car.Up) > MathF.PI * 0.6f;
-			AllowDodges = false;
+			AllowDodges = true;
 			WasteBoost = false;
 
 			Action = null;
@@ -165,8 +165,9 @@ namespace RedUtils
 				float turnRadius = TurnRadius(MathF.Abs(forwardSpeed));
 				// Finds the point of rotation for our bot
 				Vec3 nearestTurnCenter = mySurface.Limit(bot.Me.Location) + bot.Me.Right.FlatNorm(mySurface.Normal) * MathF.Sign(bot.Me.Right.Dot(finalTarget - bot.Me.Location)) * turnRadius;
-				// Gets the landing position and landing time of our car
-				Vec3 landingPos = bot.Me.PredictLandingPosition(out float landingTime);
+				// Gets info on the landing of our car
+				float landingTime = bot.Me.PredictLandingTime();
+				Vec3 landingPos = bot.Me.PredictLocation(landingTime);
 
 				if (Field.DistanceBetweenPoints(nearestTurnCenter, Target) > turnRadius - 40 && bot.Me.IsGrounded)
 				{
@@ -175,7 +176,9 @@ namespace RedUtils
 				}
 				else if (!bot.Me.IsGrounded)
 				{
-					bot.Controller.Boost = carSpeed < Distance(bot.Me) / MathF.Max(TimeRemaining - landingTime, 0.001f) && WasteBoost;
+					// Protects us from errors
+					TimeRemaining = float.IsNaN(TimeRemaining) ? 0.01f : TimeRemaining;
+					bot.Throttle(Distance(bot.Me) / MathF.Max(TimeRemaining - landingTime, 0.01f));
 				}
 				else
 				{
@@ -193,9 +196,9 @@ namespace RedUtils
 				{
 					// Otherwise, aim so we have a smooth landing
 					Vec3 landingNormal = Field.FindLandingSurface(bot.Me).Normal;
-					Vec3 landingPoint = landingPos + bot.Me.Velocity.FlatNorm(landingNormal) * MathF.Max(1000 - landingTime * 750, 100);
-					bot.AimAt(landingPoint, landingNormal);
-					angleToTarget = bot.Me.Forward.Angle(bot.Me.Location.Direction(landingPoint));
+					Vec3 targetDirection = Utils.Lerp(Utils.Cap(landingTime * 1.5f - 0.5f, 0, 0.75f), bot.Me.Velocity.FlatNorm(landingNormal), -Vec3.Up);
+					bot.AimAt(bot.Me.Location + targetDirection, landingNormal);
+					angleToTarget = bot.Me.Forward.Angle(targetDirection);
 				}
 
 				// Only boost when we are facing our target, and when we really need to
@@ -220,12 +223,12 @@ namespace RedUtils
 						if (TargetSpeed > 100 + forwardSpeed)
 						{
 							// When we're moving forward, and need extra speed, look for dodges, speedflips, and wavedashes
-							if (bot.Me.Location.z < 200 && bot.Me.IsGrounded && carSpeed > 1200 && bot.Me.Forward.FlatAngle(bot.Me.Location.Direction(finalTarget)) < 0.1f && timeOnGround > 0.2f)
+							if (bot.Me.Location.z < 200 && bot.Me.IsGrounded && carSpeed > 1000 && bot.Me.Forward.FlatAngle(bot.Me.Location.Direction(finalTarget)) < 0.1f && timeOnGround > 0.2f)
 							{
 								// If we are on the ground, we rule out wavedashes, and look at dodges
 								Dodge dodge = new Dodge(bot.Me.Location.FlatDirection(Target));
 
-								if (timeLeft > SpeedFlip.Duration && bot.Me.Boost > 0 && Field.InField(predictedLocation, 500))
+								if (timeLeft > SpeedFlip.Duration && bot.Me.Boost > 0 && Field.InField(predictedLocation, 500) && WasteBoost)
 								{ 
 									// Only speedflip if we have time, and have boost
 									Action = new SpeedFlip(bot.Me.Location.FlatDirection(Target));
@@ -514,13 +517,14 @@ namespace RedUtils
 			// Calculates the car's forward direction when it starts driving, and it's velocity in that direction
 			Vec3 carForward = car.IsGrounded ? car.Forward : (car.Velocity.FlatLen() > 500 ? car.Velocity.FlatNorm(surfaceNormal) : car.Location.FlatDirection(target, surfaceNormal));
 			float currentSpeed = carForward.Dot(car.Velocity);
+			float landingTime = car.PredictLandingTime();
 
 			if (backwards)
 			{
 				// Calculates the speed it will be moving at after the turn
 				float speed = MathF.Max(SpeedAfterTurn(-currentSpeed, angle, 0.8f), 1410);
 				// Estimates how long it will take to drive to the target backwards
-				return turnDistance / MathF.Max(SpeedFromTurnRadius(radius), 400) + distance / speed;
+				return landingTime + turnDistance / MathF.Max(SpeedFromTurnRadius(radius), 400) + distance / speed;
 			}
 			else
 			{
@@ -536,16 +540,16 @@ namespace RedUtils
 					// Calculates the actual maxmimum speed of the car after the turn
 					finSpeed = Utils.Cap(MathF.Sqrt(MathF.Max(MathF.Pow(minSpeed, 2) + 2 * Car.BoostAccel * distance, 0)), 1410, Car.MaxSpeed);
 					// Estimates how long it will take to drive to the target while boosting
-					return turnDistance / MathF.Max(SpeedFromTurnRadius(radius), 400) + distance / ((minSpeed + finSpeed) / 2);
+					return landingTime + turnDistance / MathF.Max(SpeedFromTurnRadius(radius), 400) + distance / ((minSpeed + finSpeed) / 2);
 				}
 				if (allowDodges && distance / finSpeed > 1.25f)
 				{
 					// If we have enough time to dodge, then estimate how long it will take to drive to the target while boosting, and then dodging!
-					return turnDistance / MathF.Max(SpeedFromTurnRadius(radius), 400) + distanceWhileBoosting / ((minSpeed + finSpeed) / 2) + (distance - distanceWhileBoosting) / (finSpeed + 500);
+					return landingTime + turnDistance / MathF.Max(SpeedFromTurnRadius(radius), 400) + distanceWhileBoosting / ((minSpeed + finSpeed) / 2) + (distance - distanceWhileBoosting) / (finSpeed + 500);
 				}
 
 				// Estimates how long it will take to drive to the target
-				return turnDistance / MathF.Max(SpeedFromTurnRadius(radius), 400) + distanceWhileBoosting / ((minSpeed + finSpeed) / 2) + (distance - distanceWhileBoosting) / finSpeed;
+				return landingTime + turnDistance / MathF.Max(SpeedFromTurnRadius(radius), 400) + distanceWhileBoosting / ((minSpeed + finSpeed) / 2) + (distance - distanceWhileBoosting) / finSpeed;
 			}
 		}
 

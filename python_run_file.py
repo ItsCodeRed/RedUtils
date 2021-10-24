@@ -8,7 +8,7 @@ from rlbot.parsing.custom_config import ConfigHeader, ConfigObject
 
 class DotNetBot(ExecutableWithSocketAgent):
     def get_port(self) -> int:
-        return 45031  # The port given to the executable in the program arguments
+        return 69420  # Nice. The port given to the executable in the program arguments
 
     def load_config(self, config_header: ConfigHeader):
         # Grabs the executable in the config
@@ -18,5 +18,4 @@ class DotNetBot(ExecutableWithSocketAgent):
     @staticmethod
     def create_agent_configurations(config: ConfigObject):
         params = config.get_header(BOT_CONFIG_AGENT_HEADER)
-        params.add_value('executable_path', str, default=None,
-                         description='Relative path to the bot executable.')
+        params.add_value('executable_path', str, default=None, description='Relative path to the bot executable.')

@@ -188,9 +188,9 @@ namespace RedUtils
 				return NearestSurface(car.Location, Array.Empty<Surface>()); // If the car is already on the ground, return the nearest surface
 
 			// How much time before the car lands on the ground
-			float groundLandingTime = Utils.Quadratic(Game.Gravity.z / 2, car.Velocity.z, car.Location.z)[1];
+			float groundLandingTime = Utils.Quadratic(Game.Gravity.z / 2, car.Velocity.z, car.Location.z - 15)[1];
 			// How much time before the car lands on the ceiling. -1 if the car isn't going to land on the ceiling
-			float ceilingLandingTime = Utils.Quadratic(Game.Gravity.z / 2, car.Velocity.z, car.Location.z - Height)[1];
+			float ceilingLandingTime = Utils.Quadratic(Game.Gravity.z / 2, car.Velocity.z, car.Location.z + 15 - Height)[1];
 			// Gets the landing surface and time, for either the ground or ceiling (depending on which we land on first)
 			Surface landingSurface = ceilingLandingTime < 0 ? Surfaces["Ground"] : Surfaces["Ceiling"];
 			float landingTime = ceilingLandingTime < 0 ? groundLandingTime : ceilingLandingTime;

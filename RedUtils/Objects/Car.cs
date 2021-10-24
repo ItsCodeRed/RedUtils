@@ -234,57 +234,35 @@ namespace RedUtils
 			return Orientation.Dot(vec);
 		}
 
-		/// <summary>Predicts where the car is going to land. returns it's current position if it is on the ground already</summary>
-		public Vec3 PredictLandingPosition()
+		/// <summary>Predicts when the car is going to land. returns 0 if it is on the ground already</summary>
+		public float PredictLandingTime()
 		{
 			if (IsGrounded)
-				return Field.LimitToNearestSurface(Location); // If the car is already on the ground, return the nearest surface
+				return 0; 
 
 			// How much time before the car lands on the ground
-			float groundLandingTime = Utils.Quadratic(Game.Gravity.z / 2, Velocity.z, Location.z)[1];
+			float groundLandingTime = Utils.Quadratic(Game.Gravity.z / 2, Velocity.z, Location.z - 15)[1];
 			// How much time before the car lands on the ceiling. -1 if the car isn't going to land on the ceiling
-			float ceilingLandingTime = Utils.Quadratic(Game.Gravity.z / 2, Velocity.z, Location.z - Field.Height)[1];
+			float ceilingLandingTime = Utils.Quadratic(Game.Gravity.z / 2, Velocity.z, Location.z + 15 - Field.Height)[1];
+			// How long until the car lands on the ceiling/floor
+			float landingTime = ceilingLandingTime < 0 ? groundLandingTime : ceilingLandingTime;
 			// The location where the car will land, on either the ground or the ceiling
-			Vec3 landingPos = PredictLocation(ceilingLandingTime == -1 ? groundLandingTime : ceilingLandingTime);
+			Vec3 landingPos = PredictLocation(landingTime);
 
 			if (!Field.InField(landingPos, 150))
 			{
 				// If the landing position if outside of the field, we are going to be landing on a wall
 				Surface landingSurface = Field.FindLandingSurface(this);
-				float landingTime = MathF.Max(Location.Dist(landingSurface.Limit(Location)) / Velocity.Dot(-landingSurface.Normal), 0);
-				landingPos = PredictLocation(landingTime);
+				landingTime = MathF.Max((Location - landingSurface.Limit(Location)).Dot(landingSurface.Normal) / Velocity.Dot(-landingSurface.Normal), 0);
 			}
 
-			return landingPos;
+			return landingTime;
 		}
 
 		/// <summary>Predicts where the car is going to land. returns it's current position if it is on the ground already</summary>
-		/// <param name="landingTime">Gives us how much time we have left until we land</param>
-		public Vec3 PredictLandingPosition(out float landingTime)
+		public Vec3 PredictLandingPosition()
 		{
-			if (IsGrounded)
-			{
-				landingTime = 0;
-				return Field.LimitToNearestSurface(Location); // If the car is already on the ground, return the nearest surface
-			}
-
-			// How much time before the car lands on the ground
-			float groundLandingTime = Utils.Quadratic(Game.Gravity.z / 2, Velocity.z, Location.z)[1];
-			// How much time before the car lands on the ceiling. -1 if the car isn't going to land on the ceiling
-			float ceilingLandingTime = Utils.Quadratic(Game.Gravity.z / 2, Velocity.z, Location.z - Field.Height)[1];
-			landingTime = ceilingLandingTime == -1 ? groundLandingTime : ceilingLandingTime;
-			// The location where the car will land, on either the ground or the ceiling
-			Vec3 landingPos = PredictLocation(ceilingLandingTime == -1 ? groundLandingTime : ceilingLandingTime);
-
-			if (!Field.InField(landingPos, 150))
-			{
-				// If the landing position if outside of the field, we are going to be landing on a wall
-				Surface landingSurface = Field.FindLandingSurface(this);
-				landingTime = MathF.Max(Location.Dist(landingSurface.Limit(Location)) / Velocity.Dot(-landingSurface.Normal), 0);
-				landingPos = PredictLocation(landingTime);
-			}
-
-			return landingPos;
+			return PredictLocation(PredictLandingTime());
 		}
 
 		/// <summary>Predicts the location and velocity of the car after a certain amount of time</summary>

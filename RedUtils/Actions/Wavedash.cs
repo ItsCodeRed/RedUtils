@@ -70,15 +70,19 @@ namespace RedUtils
 			}
 			float elapsed = Game.Time - _startTime;
 
-			// If we are about to hit the ground, dodge!
-			if (!bot.Me.IsGrounded && bot.Me.Location.z < 40 && bot.Me.Velocity.z < -100)
+			// If we should be jumping, jump
+			if (elapsed < JumpTime && _jumping)
 			{
-				// If the directional input hasn't been set
+				bot.Controller.Jump = true;
+			}
+			else if (!bot.Me.IsGrounded && bot.Me.Location.z < 40 && bot.Me.Velocity.z < -100)
+			{
+				// If we are about to hit the ground, dodge!
 				if (_input.Length() == 0)
 				{
-					// Sets the input according to the given direction. If no direction is given, just dodge forward
-					_input = Direction.Length() > 0 ? 
-							new Vec3(bot.Me.Local(Direction)[1], -bot.Me.Local(Direction)[0]) : 
+					// If the input hasn't been set, set the input according to the given direction. If no direction is given, just dodge forward
+					_input = Direction.Length() > 0 ?
+							new Vec3(bot.Me.Local(Direction)[1], -bot.Me.Local(Direction)[0]) :
 							new Vec3(bot.Me.Local(bot.Me.Velocity).Normalize()[1], -bot.Me.Local(bot.Me.Velocity).Normalize()[0]);
 				}
 
@@ -87,19 +91,15 @@ namespace RedUtils
 				bot.Controller.Pitch = _input[1];
 				bot.Controller.Jump = true;
 			}
+			else if (!bot.Me.IsGrounded)
+			{
+				// Aim slightly above the ground, in the direction given
+				Vec3 landingNormal = Field.FindLandingSurface(bot.Me).Normal;
+				bot.AimAt(bot.Me.Location + (Direction.Length() > 0 ? Direction.FlatNorm(landingNormal) : bot.Me.Velocity.FlatNorm(landingNormal)) + landingNormal * 0.2f, landingNormal);
+			}
 			else
 			{
-				// If we should be jumping, jump
-				if (elapsed < JumpTime && _jumping)
-				{
-					bot.Controller.Jump = true;
-				}
-				if (!bot.Me.IsGrounded)
-				{
-					// Aim slightly above the ground, in the direction given
-					Vec3 landingNormal = Field.FindLandingSurface(bot.Me).Normal;
-					bot.AimAt(bot.Me.Location + (Direction.Length() > 0 ? Direction.FlatNorm(landingNormal) : bot.Me.Velocity.FlatNorm(landingNormal)) + landingNormal * 0.2f, landingNormal);
-				}
+				Finished = true;
 			}
 		}
 	}

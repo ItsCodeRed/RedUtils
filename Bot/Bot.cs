@@ -32,7 +32,7 @@ namespace Bot
 
                 Action = goingForKickoff ? new Kickoff() : new GetBoost(Me, false); // if we aren't going for the kickoff, get boost
             }
-            else if (Action == null || Action is Drive)
+            else if (Action == null || (Action is Drive && Action.Interruptible))
             {
                 // search for the first shot using DefaultShotCheck
                 Shot shot = FindShot(DefaultShotCheck, new Target(TheirGoal));

@@ -66,16 +66,16 @@ namespace RedUtils
 
 			// Predicts the ball's state after contact
 			Ball ballAfterHit = Slice.ToBall();
-			Vec3 carFinVel = (((init ? Slice.Location : TargetLocation) - car.Location) / timeRemaining).Cap(0, 2300);
-			ballAfterHit.velocity = (carFinVel + Slice.Velocity) / 2;
-			carFinVel = (carFinVel + (init ? carFinVel.FlatNorm() * 500 : ShotDirection.FlatNorm() * 500)).Cap(0, 2300);
+			Vec3 carFinVel = (((init ? Slice.Location : TargetLocation) - car.Location) / timeRemaining + (init ? car.Location.FlatDirection(Slice.Location) * 500 : ShotDirection.FlatNorm() * 500)).Cap(0, 2300);
+			ballAfterHit.velocity = (carFinVel * 6 + Slice.Velocity) / 7;
 
 			// Predicts how long it will take the ball to hit the target after being hit
 			Vec3 directionToScore = Slice.Location.FlatDirection(ShotTarget);
 			float velocityDiff = (carFinVel - Slice.Velocity).Length();
-			float timeToScore = Slice.Location.FlatDist(ShotTarget) / Utils.Cap(velocityDiff * Utils.ShotPowerModifier(velocityDiff) + ballAfterHit.velocity.Dot(directionToScore) + 500, 500, Ball.MaxSpeed);
+			float timeToScore = Slice.Location.FlatDist(ShotTarget) / Utils.Cap(velocityDiff * Utils.ShotPowerModifier(velocityDiff) + ballAfterHit.velocity.Dot(directionToScore), 500, Ball.MaxSpeed);
 
 			// Calculates the shot direction, and target location
+			ballAfterHit.velocity = (carFinVel + Slice.Velocity * 2) / 3;
 			ShotDirection = ballAfterHit.PredictLocation(timeToScore).Direction(ShotTarget);
 			TargetLocation = Slice.Location - ShotDirection * 165;
 
@@ -106,7 +106,7 @@ namespace RedUtils
 			float jumpTime = Utils.TimeToJump(normal, MathF.Max(height, 50) - 17);
 
 			// Adjusts the horizontal offset of the target location so we don't miss, and hit it with power
-			TargetLocation = TargetLocation.Dot(normal) * normal + Slice.Location.Flatten(normal) - ShotDirection.FlatNorm(normal) * MathF.Min(165, Slice.Location.FlatDist(TargetLocation) + 25);
+			TargetLocation -= ShotDirection.FlatNorm(normal) * 25;
 			// If the target is on the wall, we have to adjust the target slightly to adjust for gravity and other factors
 			if (normal.Dot(Vec3.Up) < 0.95f)
 			{
@@ -190,14 +190,14 @@ namespace RedUtils
 					// If the target time has passed, or someone else hits the ball before us, then we stop this action
 					Finished = true;
 				}
-				else if (timeRemaining > 0.065f || _jumpElapsed < 0.05f)
+				else if (timeRemaining > 0.075f || _jumpElapsed < 0.05f)
 				{
 					// Holds the jump button for as long as we need
 					bot.Controller.Jump = true;
 				}
-				else if (_step < 3 || timeRemaining > 0.05f)
+				else if (_step < 3 || timeRemaining > 0.06f)
 				{
-					// Releases the jump button for at least 3 frames, and then wait until we have .05 seconds until the target time
+					// Releases the jump button for at least 3 frames, and then wait until we have .06 seconds until the target time
 					bot.Controller.Jump = false;
 					_step++;
 				}

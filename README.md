@@ -5,24 +5,25 @@ A set of utitilies for making rocket league bots in C#
 ## Usage Instructions
 
 ### Prerequisites
-Make sure you've installed [Python 3.7 64 bit](https://www.python.org/ftp/python/3.7.3/python-3.7.3-amd64.exe) or newer. During installation:
+Make sure you've installed [.NET SDK 5.0 x64](https://dotnet.microsoft.com/download) or newer.
+And make sure you've installed [Python 3.7 64 bit](https://www.python.org/ftp/python/3.7.3/python-3.7.3-amd64.exe) or newer. During installation:
    - Select "Add Python to PATH"
    - Make sure pip is included in the installation
    
 Set up RLBotGUI
-1. Follow instructions at https://youtu.be/lPkID_IH88U for instructions.
+1. Set up and install the RLBotGUI, by following this along with this [video](https://www.youtube.com/watch?v=oXkbizklI2U&t=0s).
 1. Use Add -> Load folder in RLBotGUI on the current directory. This bot should appear in the list.
 
 
 ### Using Visual Studio
-1. Install Visual Studio 2015 or newer. It should come with .NET Framework 4.6.1 or newer.
+1. Install Visual Studio 2019 16.8 or newer.
 1. Open CSharpBot\Bot.sln in Visual Studio.
 1. In Visual Studio, click the "Start" button, 
 1. In RLBotGUI, put the bot on a team and start the match.
 
 ### Using Rider
 1. Install Rider. If you do not have Visual Studio installed alongside Rider, follow [this article](https://rider-support.jetbrains.com/hc/en-us/articles/207288089-Using-Rider-under-Windows-without-Visual-Studio-prerequisites) to set up Rider.
-1. Open CSharpBot\Bot.sln in Rider.
+1. Open Bot\Bot.sln in Rider.
 1. In Rider, click the "Run Default" button, which should compile and run the bot. Leave it running.
    - The first time you click it, you may be given a dialog to set up the configuration. Click the "Run" button in the dialog to continue.
 1. In RLBotGUI, put the bot on a team and start the match.
@@ -45,8 +46,9 @@ your bot will work right in the next tournament!
 
 ## Notes
 
-- Bot behavior is controlled by `CSharpBot/Bot/Bot.cs`
-- Bot appearance is controlled by `PythonAgent/appearance.cfg`
+- Bot name, description, etc, is configured by `Bot.cfg`
+- Bot strategy is controlled by `Bot/Bot.cs`
+- Bot appearance is controlled by `Loadouts/loadout_generator.py`
 - See the [wiki](https://github.com/RLBot/RLBotCSharpExample/wiki) for tips to improve your programming experience.
 - If you'd like to keep up with bot strategies and bot tournaments, join our [Discord server](https://discord.gg/q9pbsWz). It's the heart of the RLBot community!
 
@@ -54,5 +56,5 @@ your bot will work right in the next tournament!
 ## Overview of how the C# bot interacts with Python
 
 The C# bot executable is a server that listens for Python clients.
-When `PythonAgent/PythonAgent.py` is started by the RLBot framework, it connects to the C# bot server and tells it its info.
+When `python_run_file.py` is started by the RLBot framework, it connects to the C# bot server and tells it its info.
 Then, the C# bot server controls the bot through the `RLBot_Core_Interface` DLL.

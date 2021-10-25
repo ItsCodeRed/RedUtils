@@ -286,7 +286,7 @@ namespace RedUtils
 		/// <summary>Estimates the location of the car after dodging in the same direction that the car is going in</summary>
 		public Vec3 LocationAfterDodge()
 		{
-			return Location + (Velocity + Velocity.FlatNorm() * 500).Cap(0, 2300) * 1.3f;
+			return Location + (Velocity + Velocity.FlatNorm() * 500).Cap(0, Car.MaxSpeed) * 1.3f;
 		}
 
 		/// <summary>Predicts the location of the car after jumping</summary>

@@ -57,10 +57,7 @@ namespace RedUtils
 			{
 				return new float[2] { (-b + inside) / (2 * a), (-b - inside) / (2 * a) };
 			}
-			else
-			{
-				return new float[2] { -1, -1 };
-			}
+			return new float[2] { -1, -1 };
 		}
 
 		/// <summary>Calculates how long it will take to jump a certain height</summary>
@@ -107,11 +104,11 @@ namespace RedUtils
 			{
 				return 0.65f;
 			}
-			else if (value <= 2300)
+			else if (value <= Car.MaxSpeed)
 			{
 				return Lerp((value - 500) / 1800, 0.65f, 0.55f);
 			}
-			return Lerp((value - 2300) / 4600, 0.55f, 0.3f);
+			return Lerp((value - Car.MaxSpeed) / 4600, 0.55f, 0.3f);
 		}
 	}
 }

@@ -224,8 +224,8 @@ namespace RedUtils
 				if (timeRemaining > 0 && target.Fits(slice.Location))
 				{
 					Ball ballAfterHit = slice.ToBall();
-					Vec3 carFinVel = ((slice.Location - Me.Location) / timeRemaining).Cap(0, 2300);
-					ballAfterHit.velocity = (carFinVel + slice.Velocity) / 2;
+					Vec3 carFinVel = ((slice.Location - Me.Location) / timeRemaining).Cap(0, Car.MaxSpeed);
+					ballAfterHit.velocity = carFinVel + slice.Velocity.Flatten(carFinVel.Normalize()) * 0.8f;
 					Vec3 shotTarget = target.Clamp(ballAfterHit);
 
 					// First, check if we can aerial

@@ -38,7 +38,7 @@ namespace RedUtils
 			{
 				bot.Throttle(Car.MaxSpeed);
 				// Aim at a point slightly offset from the ball, so we get an optimal 50/50 on the kickoff
-				bot.AimAt(Ball.Location - Ball.Location.Direction(bot.TheirGoal.Location) * 165);
+				bot.AimAt(Ball.Location - Ball.Location.Direction(bot.TheirGoal.Location) * 170);
 
 				if (!bot.IsKickoff)
 				{
@@ -49,12 +49,12 @@ namespace RedUtils
 				{
 					// When we are moving fast enough, start speed flipping
 					_speedFlipped = true;
-					_speedFlip = new SpeedFlip(bot.Me.Location.Direction(Ball.Location - Ball.Location.Direction(bot.TheirGoal.Location) * 165));
+					_speedFlip = new SpeedFlip(bot.Me.Location.Direction(Ball.Location - Ball.Location.Direction(bot.TheirGoal.Location) * 170));
 				}
-				else if (bot.Me.Location.Dist(Ball.Location) < 750 && bot.Me.IsGrounded)
+				else if (bot.Me.Location.Dist(Ball.Location) < 800 && bot.Me.IsGrounded)
 				{
 					// When we are close enough to the ball, dodge into it
-					bot.Action = new Dodge(bot.Me.Location.Direction(Ball.Location), 0.15f);
+					bot.Action = new Dodge(Ball.Location.Direction(bot.TheirGoal.Location), 0.18f);
 				}
 			}
 		}

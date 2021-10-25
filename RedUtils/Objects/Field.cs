@@ -88,7 +88,15 @@ namespace RedUtils
 		{
 			for (int i = 0; i < fieldInfo.BoostPadsLength; i++)
 			{
-				Boosts.Add(new Boost(i, fieldInfo.BoostPads(i).Value));
+				if (fieldInfo.BoostPads(i).HasValue)
+				{
+					Boosts.Add(new Boost(i, fieldInfo.BoostPads(i).Value));
+				}
+				else
+				{
+					// Sometimes the bot isn't given the boost pads initially, but we still want to initialize them all in case they become avaliable again
+					Boosts.Add(new Boost(i));
+				}
 			}
 		}
 
@@ -200,14 +208,14 @@ namespace RedUtils
 			if (!InField(groundLanding, 150))
 			{
 				// If the landing position if outside of the field, we are going to be landing on a wall
-				foreach (Surface surface in Surfaces.Values)
+				foreach (Surface surface in DrivableSurfaces.Values)
 				{
-					// Loop through every surface, except for the ground and ceiling. (we already account for those)
-					if (surface.Key == "Ground" || surface.Key == "Ceiling")
+					// Loop through every drivable surface, except for the ground (we already accounted for that)
+					if (surface.Key == "Ground")
 						continue;
 
 					// Calculate how much time until we land on the surface
-					float surfaceLandingTime = car.Location.Dist(LimitToNearestSurface(car.Location)) / car.Velocity.Dot(-surface.Normal);
+					float surfaceLandingTime = car.Location.Dist(surface.Limit(car.Location)) / car.Velocity.Dot(-surface.Normal);
 					if (surfaceLandingTime > 0 && surfaceLandingTime < landingTime)
 					{
 						// Sets this as the next landing time
@@ -287,9 +295,8 @@ namespace RedUtils
 		public Vec3 Limit(Vec3 pos)
 		{
 			Vec3 posToSurace = pos - Location;
-			Vec3 finalPos = Location + Xdirection * Utils.Cap(Xdirection.Dot(posToSurace), -Size.x / 2, Size.x / 2) + Ydirection * Utils.Cap(Ydirection.Dot(posToSurace), -Size.y / 2, Size.y / 2);
 
-			return finalPos;
+			return Location + Xdirection * Utils.Cap(Xdirection.Dot(posToSurace), -Size.x / 2, Size.x / 2) + Ydirection * Utils.Cap(Ydirection.Dot(posToSurace), -Size.y / 2, Size.y / 2);
 		}
 	}
 }

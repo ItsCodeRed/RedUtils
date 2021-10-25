@@ -21,6 +21,9 @@ namespace Bot
         // Runs every tick. Should be used to find an Action to execute
         public override void Run()
         {
+            // Prints out the current action to the screen, so we know what our bot is doing
+            DrawText2D(Action != null ? Action.ToString() : "", Color.FromArgb(255, 255, 255), new Vec3(10, 10), 5, 5);
+
             if (IsKickoff && Action == null)
             {
                 bool goingForKickoff = true; // by default, go for kickoff
@@ -34,7 +37,7 @@ namespace Bot
             }
             else if (Action == null || (Action is Drive && Action.Interruptible))
             {
-                // search for the first shot using DefaultShotCheck
+                // search for the first avaliable shot using DefaultShotCheck
                 Shot shot = FindShot(DefaultShotCheck, new Target(TheirGoal));
 
                 // if a shot is found, go for the shot. Otherwise, if there is an Action to execute, execute it. If none of the others apply, drive back to goal.

@@ -86,7 +86,7 @@ namespace RedUtils
 
 					// Calculates some special values that we need to know for getting the correct input
 					float forwardVel = bot.Me.Forward.Dot(bot.Me.Velocity);
-					float s = MathF.Abs(forwardVel) / 2300;
+					float s = MathF.Abs(forwardVel) / Car.MaxSpeed;
 					bool backwardsDodge = MathF.Abs(forwardVel) < 100 ? (localDirection[0] < 0) : (localDirection[0] >= 0) != (forwardVel > 0);
 
 					// Manipulate the local direction by some special values, so we are dodging in the right direction

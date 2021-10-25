@@ -61,7 +61,7 @@ namespace RedUtils
 
 			// Predicts the ball's state after contact
 			Ball ballAfterHit = Slice.ToBall();
-			Vec3 carFinVel = (((init ? Slice.Location : TargetLocation) - car.Location).Flatten(normal) / timeRemaining).Cap(0, 2300);
+			Vec3 carFinVel = (((init ? Slice.Location : TargetLocation) - car.Location).Flatten(normal) / timeRemaining).Cap(0, Car.MaxSpeed);
 			ballAfterHit.velocity = (carFinVel * 6 + Slice.Velocity) / 7;
 
 			// Predicts how long it will take the ball to hit the target after being hit
@@ -90,14 +90,12 @@ namespace RedUtils
 			{
 				// If this is during initialization, we need to create the arrive action
 				ArriveAction = new Arrive(car, TargetLocation, ShotDirection.FlatNorm(surface.Normal), Slice.Time, true, 0.1f);
+				return;
 			}
-			else
-			{
-				// Otherwise, just update the arrive action
-				ArriveAction.Target = TargetLocation;
-				ArriveAction.Direction = ShotDirection.FlatNorm(surface.Normal);
-				Finished = height > 20.5f;
-			}
+			// Otherwise, just update the arrive action
+			ArriveAction.Target = TargetLocation;
+			ArriveAction.Direction = ShotDirection.FlatNorm(surface.Normal);
+			Finished = height > 20.5f;
 		}
 
 		/// <summary>Performs this ground shot</summary>

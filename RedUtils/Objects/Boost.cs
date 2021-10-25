@@ -15,6 +15,16 @@ namespace RedUtils
 		/// <summary>How much time until it activates. 0 if it is already activated</summary>
 		public float TimeUntilActive { get; private set; }
 
+		/// <summary>Initializes a new empty boost pad object</summary>
+		public Boost(int index)
+		{
+			Index = index;
+			Location = Vec3.Zero;
+			IsLarge = false;
+			IsActive = true;
+			TimeUntilActive = 0;
+		}
+
 		/// <summary>Initializes a new boost pad object with data from the packet</summary>
 		public Boost(int index, BoostPad boostPad)
 		{

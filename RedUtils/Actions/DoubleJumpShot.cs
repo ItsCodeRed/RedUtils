@@ -63,7 +63,7 @@ namespace RedUtils
 
 			// Predicts the ball's state after contact
 			Ball ballAfterHit = Slice.ToBall();
-			Vec3 carFinVel = (((init ? Slice.Location : TargetLocation) - car.Location) / timeRemaining).Cap(0, 2300);
+			Vec3 carFinVel = (((init ? Slice.Location : TargetLocation) - car.Location) / timeRemaining).Cap(0, Car.MaxSpeed);
 			ballAfterHit.velocity = (carFinVel * 6 + Slice.Velocity) / 7;
 
 			// Predicts how long it will take the ball to hit the target after being hit
@@ -95,14 +95,12 @@ namespace RedUtils
 			{
 				// If this is during initialization, we need to create the arrive action
 				ArriveAction = new Arrive(car, TargetLocation.Flatten(), ShotDirection.FlatNorm(), Slice.Time, true, Utils.TimeToJump(Vec3.Up, TargetLocation.z - 17, true));
+				return;
 			}
-			else
-			{
-				// Otherwise, just update the arrive action
-				ArriveAction.Target = TargetLocation.Flatten();
-				ArriveAction.Direction = ShotDirection.FlatNorm();
-				ArriveAction.RecoveryTime = Utils.TimeToJump(Vec3.Up, TargetLocation.z - 17, true);
-			}
+			// Otherwise, just update the arrive action
+			ArriveAction.Target = TargetLocation.Flatten();
+			ArriveAction.Direction = ShotDirection.FlatNorm();
+			ArriveAction.RecoveryTime = Utils.TimeToJump(Vec3.Up, TargetLocation.z - 17, true);
 		}
 
 		/// <summary>Performs this double jump shot</summary>

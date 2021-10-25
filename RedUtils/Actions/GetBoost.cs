@@ -42,7 +42,7 @@ namespace RedUtils
 			}
 
 			Boost chosenBoost = Field.Boosts[BoostIndex];
-			DriveAction = new Drive(car, chosenBoost.Location, 2300, true, chosenBoost.IsLarge);
+			DriveAction = new Drive(car, chosenBoost.Location, Car.MaxSpeed, true, chosenBoost.IsLarge);
 		}
 
 		/// <summary>Initializes a GetBoost action without a targeted boost pad index, so it will attempt to find the best big boost pad automatically</summary>
@@ -71,7 +71,7 @@ namespace RedUtils
 			}
 
 			Boost chosenBoost = Field.Boosts[BoostIndex];
-			DriveAction = new Drive(car, chosenBoost.Location, 2300, true, chosenBoost.IsLarge);
+			DriveAction = new Drive(car, chosenBoost.Location, Car.MaxSpeed, true, chosenBoost.IsLarge);
 		}
 
 		/// <summary>Initializes a GetBoost action with a targeted boost pad index</summary>
@@ -82,7 +82,7 @@ namespace RedUtils
 
 			BoostIndex = boostIndex;
 			Boost chosenBoost = Field.Boosts[BoostIndex];
-			DriveAction = new Drive(car, chosenBoost.Location, 2300, true, chosenBoost.IsLarge);
+			DriveAction = new Drive(car, chosenBoost.Location, Car.MaxSpeed, true, chosenBoost.IsLarge);
 		}
 
 		/// <summary>Initializes a GetBoost action with a targeted boost pad index</summary>
@@ -95,7 +95,7 @@ namespace RedUtils
 
 			BoostIndex = boostIndex;
 			Boost chosenBoost = Field.Boosts[BoostIndex];
-			DriveAction = new Drive(car, chosenBoost.Location, 2300, true, chosenBoost.IsLarge);
+			DriveAction = new Drive(car, chosenBoost.Location, Car.MaxSpeed, true, chosenBoost.IsLarge);
 		}
 
 		/// <summary>Drives to the chosen boost pad</summary>

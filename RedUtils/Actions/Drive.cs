@@ -39,7 +39,7 @@ namespace RedUtils
 			Finished = false;
 
 			Target = target;
-			TargetSpeed = 2300;
+			TargetSpeed = Car.MaxSpeed;
 
 			float forwardsEta = GetEta(car, target, false, false);
 			float backwardsEta = GetEta(car, target, true, false);
@@ -167,7 +167,6 @@ namespace RedUtils
 				Vec3 nearestTurnCenter = mySurface.Limit(bot.Me.Location) + bot.Me.Right.FlatNorm(mySurface.Normal) * MathF.Sign(bot.Me.Right.Dot(finalTarget - bot.Me.Location)) * turnRadius;
 				// Gets info on the landing of our car
 				float landingTime = bot.Me.PredictLandingTime();
-				Vec3 landingPos = bot.Me.PredictLocation(landingTime);
 
 				if (Field.DistanceBetweenPoints(nearestTurnCenter, Target) > turnRadius - 40 && bot.Me.IsGrounded)
 				{
@@ -196,7 +195,7 @@ namespace RedUtils
 				{
 					// Otherwise, aim so we have a smooth landing
 					Vec3 landingNormal = Field.FindLandingSurface(bot.Me).Normal;
-					Vec3 targetDirection = Utils.Lerp(Utils.Cap(landingTime * 1.5f - 0.5f, 0, 0.75f), bot.Me.Velocity.FlatNorm(landingNormal), -Vec3.Up);
+					Vec3 targetDirection = Utils.Lerp(Utils.Cap(landingTime * 1.5f - 0.6f, 0, 0.75f), bot.Me.Velocity.FlatNorm(landingNormal), -Vec3.Up);
 					bot.AimAt(bot.Me.Location + targetDirection, landingNormal);
 					angleToTarget = bot.Me.Forward.Angle(targetDirection);
 				}
@@ -563,7 +562,7 @@ namespace RedUtils
 		/// <summary>Returns the turn radius of the car at a given speed</summary>
 		public static float TurnRadius(float speed)
 		{
-			speed = Utils.Cap(speed, 0.01f, 2300);
+			speed = Utils.Cap(speed, 0.01f, Car.MaxSpeed);
 			if (speed <= 500)
 				return Utils.Lerp(speed / 500, 145, 251);
 			if (speed <= 1000)
@@ -587,7 +586,7 @@ namespace RedUtils
 				return Utils.Lerp((radius - 425) / 302, 1000, 1500);
 			if (radius <= 909)
 				return Utils.Lerp((radius - 727) / 182, 1500, 1750);
-			return Utils.Lerp((radius - 909) / 227, 1750, 2300);
+			return Utils.Lerp((radius - 909) / 227, 1750, Car.MaxSpeed);
 		}
 
 		/// <summary>Estimates the speed of the car after a turn, given the current speed of the car and the angle of the turn</summary>

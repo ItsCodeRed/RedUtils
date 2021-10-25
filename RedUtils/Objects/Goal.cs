@@ -8,7 +8,7 @@ namespace RedUtils
 	public class Goal
 	{
 		/// <summary>The total width of the goal, from post to post</summary>
-		public const float Width = 1700;
+		public const float Width = 1780;
 		/// <summary>The total height of the goal, from ground to crossbar</summary>
 		public const float Height = 640;
 		/// <summary>The total depth of the goal</summary>

@@ -66,7 +66,7 @@ namespace RedUtils
 
 			// Predicts the ball's state after contact
 			Ball ballAfterHit = Slice.ToBall();
-			Vec3 carFinVel = (((init ? Slice.Location : TargetLocation) - car.Location) / timeRemaining + (init ? car.Location.FlatDirection(Slice.Location) * 500 : ShotDirection.FlatNorm() * 500)).Cap(0, 2300);
+			Vec3 carFinVel = (((init ? Slice.Location : TargetLocation) - car.Location) / timeRemaining + (init ? car.Location.FlatDirection(Slice.Location) * 500 : ShotDirection.FlatNorm() * 500)).Cap(0, Car.MaxSpeed);
 			ballAfterHit.velocity = (carFinVel * 6 + Slice.Velocity) / 7;
 
 			// Predicts how long it will take the ball to hit the target after being hit
@@ -75,7 +75,7 @@ namespace RedUtils
 			float timeToScore = Slice.Location.FlatDist(ShotTarget) / Utils.Cap(velocityDiff * Utils.ShotPowerModifier(velocityDiff) + ballAfterHit.velocity.Dot(directionToScore), 500, Ball.MaxSpeed);
 
 			// Calculates the shot direction, and target location
-			ballAfterHit.velocity = (carFinVel + Slice.Velocity * 2) / 3;
+			ballAfterHit.velocity = (carFinVel + Slice.Velocity * 2) / 3f;
 			ShotDirection = ballAfterHit.PredictLocation(timeToScore).Direction(ShotTarget);
 			TargetLocation = Slice.Location - ShotDirection * 165;
 
@@ -86,8 +86,8 @@ namespace RedUtils
 			// Calculates a new angle for the shot direction and an angle for the dodge direction, based on whats possible for the car to rotate to
 			float height = (TargetLocation - surface.Limit(TargetLocation)).Dot(normal);
 			float angle = MathF.Asin(ShotDirection.Dot(normal));
-			float dodgeAngle = MathF.Min(MathF.Min(angle + 0.275f, MathF.PI * 0.4f), MathF.Max(Utils.PredictRotation(Car.PitchAngularAccel, Utils.TimeToJump(normal, MathF.Max(height, 50) - 17)) + 0.3f, 0.5f));
-			angle = dodgeAngle - 0.275f;
+			float dodgeAngle = MathF.Min(MathF.Min(angle + 0.25f, MathF.PI * 0.4f), MathF.Max(Utils.PredictRotation(Car.PitchAngularAccel, Utils.TimeToJump(normal, MathF.Max(height, 50) - 17)) + 0.2f, 0.6f));
+			angle = dodgeAngle - 0.25f;
 
 			// Adjusts the shot direction, dodge direction, and target location using the values calculated before
 			ShotDirection = ShotDirection.FlatNorm(normal) * MathF.Cos(angle) + normal * MathF.Sin(angle);
@@ -97,13 +97,13 @@ namespace RedUtils
 			// if the target location is too close to the surface, change the shot direction and the target location so it is flatter against the surface
 			float ballHeight = (Slice.Location - surface.Limit(Slice.Location)).Dot(normal);
 			height = (TargetLocation - surface.Limit(TargetLocation)).Dot(normal);
-			if (height < 50)
+			if (height < 40)
 			{
-				angle = MathF.Asin(Utils.Cap((ballHeight - 50) / 165, -1, 1));
+				angle = MathF.Asin(Utils.Cap((ballHeight - 40) / 165, -1, 1));
 				ShotDirection = (ShotDirection.FlatNorm(normal) * MathF.Cos(angle) + normal * MathF.Sin(angle)).Normalize();
 				TargetLocation = Slice.Location - ShotDirection * 165;
 			}
-			float jumpTime = Utils.TimeToJump(normal, MathF.Max(height, 50) - 17);
+			float jumpTime = Utils.TimeToJump(normal, MathF.Max(height, 40) - 17);
 
 			// Adjusts the horizontal offset of the target location so we don't miss, and hit it with power
 			TargetLocation -= ShotDirection.FlatNorm(normal) * 25;
@@ -118,14 +118,12 @@ namespace RedUtils
 			{
 				// If this is during initialization, we need to create the arrive action
 				ArriveAction = new Arrive(car, TargetLocation, ShotDirection.FlatNorm(normal), Slice.Time, true, jumpTime + 0.1f);
+				return;
 			}
-			else
-			{
-				// Otherwise, just update the arrive action
-				ArriveAction.Target = TargetLocation;
-				ArriveAction.Direction = ShotDirection.FlatNorm(normal);
-				ArriveAction.RecoveryTime = jumpTime + 0.1f;
-			}
+			// Otherwise, just update the arrive action
+			ArriveAction.Target = TargetLocation;
+			ArriveAction.Direction = ShotDirection.FlatNorm(normal);
+			ArriveAction.RecoveryTime = jumpTime + 0.1f;
 		}
 
 		/// <summary>Performs this jump shot</summary>s
@@ -172,7 +170,7 @@ namespace RedUtils
 				}
 				else if (ReadyToJump(bot.Me, timeToJump))
 				{
-					// If we think we would hit the ball if we jump now, then jump!2
+					// If we think we would hit the ball if we jump now, then jump!
 					_jumped = true;
 				}
 			}
@@ -195,9 +193,9 @@ namespace RedUtils
 					// Holds the jump button for as long as we need
 					bot.Controller.Jump = true;
 				}
-				else if (_step < 3 || timeRemaining > 0.06f)
+				else if (_step < 3 || timeRemaining > 0.05f)
 				{
-					// Releases the jump button for at least 3 frames, and then wait until we have .06 seconds until the target time
+					// Releases the jump button for at least 3 frames, and then wait until the right time to dodge
 					bot.Controller.Jump = false;
 					_step++;
 				}
@@ -235,7 +233,7 @@ namespace RedUtils
 			Vec3 normal = Field.NearestSurface(car.Location).Normal;
 
 			// Only jump when the predicted locoation is close enough to the target locaation, and when the car will actually jump properly
-			return timeRemaining < timeToJump && MathF.Abs(car.Velocity.Dot(car.Up)) < 200 && finPos.FlatDist(TargetLocation, normal) < 50 && Interruptible;
+			return timeRemaining < timeToJump && MathF.Abs(car.Velocity.Dot(car.Up)) < 200 && finPos.FlatDist(TargetLocation, normal) < (50 - normal.Dot(Vec3.Up) * 20) && Interruptible;
 		}
 	}
 }

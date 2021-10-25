@@ -73,7 +73,7 @@ namespace RedUtils
 
 			// Predicts the ball's state after contact
 			Ball ballAfterHit = Slice.ToBall();
-			Vec3 carFinVel = ((Slice.Location - car.Location) / timeRemaining).Cap(0, 2300);
+			Vec3 carFinVel = ((Slice.Location - car.Location) / timeRemaining).Cap(0, Car.MaxSpeed);
 			ballAfterHit.velocity = (carFinVel * 6 + Slice.Velocity) / 7;
 
 			// Predicts how long it will take the ball to hit the target after being hit

@@ -38,7 +38,7 @@ namespace RedUtils
 			Direction = direction;
 			ArrivalTime = -1;
 			AllowFlipping = true;
-			Drive = new Drive(car, Target, 2300, AllowFlipping, false);
+			Drive = new Drive(car, Target, Car.MaxSpeed, AllowFlipping, false);
 			RecoveryTime = 0;
 		}
 
@@ -52,7 +52,7 @@ namespace RedUtils
 			Direction = Vec3.Zero;
 			ArrivalTime = arrivalTime;
 			AllowFlipping = true;
-			Drive = new Drive(car, Target, 2300, AllowFlipping, true);
+			Drive = new Drive(car, Target, Car.MaxSpeed, AllowFlipping, true);
 			RecoveryTime = 0;
 		}
 
@@ -67,7 +67,7 @@ namespace RedUtils
 			Direction = direction;
 			ArrivalTime = arrivalTime;
 			AllowFlipping = true;
-			Drive = new Drive(car, Target, 2300, AllowFlipping, true);
+			Drive = new Drive(car, Target, Car.MaxSpeed, AllowFlipping, true);
 			RecoveryTime = 0;
 		}
 
@@ -83,7 +83,7 @@ namespace RedUtils
 			Direction = direction;
 			ArrivalTime = arrivalTime;
 			AllowFlipping = allowFlipping;
-			Drive = new Drive(car, Target, 2300, AllowFlipping, true);
+			Drive = new Drive(car, Target, Car.MaxSpeed, AllowFlipping, true);
 			RecoveryTime = 0;
 		}
 
@@ -100,7 +100,7 @@ namespace RedUtils
 			Direction = direction;
 			ArrivalTime = arrivalTime;
 			AllowFlipping = allowFlipping;
-			Drive = new Drive(car, Target, 2300, AllowFlipping, true);
+			Drive = new Drive(car, Target, Car.MaxSpeed, AllowFlipping, true);
 			RecoveryTime = recoveryTime;
 		}
 
@@ -112,7 +112,7 @@ namespace RedUtils
 			float carSpeed = bot.Me.Velocity.Length();
 
 			// Calculates how much time we have before we should arrive
-			TimeRemaining = ArrivalTime < 0 ? distance / 2300 : MathF.Max(ArrivalTime - Game.Time, 0.001f);
+			TimeRemaining = ArrivalTime < 0 ? distance / Car.MaxSpeed : MathF.Max(ArrivalTime - Game.Time, 0.001f);
 
 			// Predicts (roughly) the location of the car after dodging
 			Vec3 predictedLocation = bot.Me.LocationAfterDodge();
@@ -127,8 +127,8 @@ namespace RedUtils
 
 				// Calculates the amount we should shift the current target
 				float additionalShift = RecoveryTime * carSpeed;
-				float shift = MathF.Min(Field.DistanceBetweenPoints(bot.Me.Location, Target) * 0.5f, Utils.Cap(carSpeed, 1410, 2300) * 1.5f);
-				float turnRadius = Drive.TurnRadius(Utils.Cap(carSpeed, 500, 2300)) * 1.1f;
+				float shift = MathF.Min(Field.DistanceBetweenPoints(Target, bot.Me.Location) * 0.6f, Utils.Cap(carSpeed, 1410, Car.MaxSpeed) * 1.5f);
+				float turnRadius = Drive.TurnRadius(Utils.Cap(carSpeed, 500, Car.MaxSpeed)) * 1.2f;
 
 				shift *= Utils.Cap((shift - additionalShift) / turnRadius, 0f, 1f);
 

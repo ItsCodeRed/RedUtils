@@ -18,14 +18,13 @@ Set up RLBotGUI
 ### Using Visual Studio
 1. Install Visual Studio 2019 16.8 or newer.
 1. Open Bot.sln in Visual Studio.
-1. In Visual Studio, click the "Start" button, 
+1. Edit the code as you see fit, and then compile 
 1. In RLBotGUI, put the bot on a team and start the match.
 
 ### Using Rider
 1. Install Rider. If you do not have Visual Studio installed alongside Rider, follow [this article](https://rider-support.jetbrains.com/hc/en-us/articles/207288089-Using-Rider-under-Windows-without-Visual-Studio-prerequisites) to set up Rider.
 1. Open Bot.sln in Rider.
-1. In Rider, click the "Run Default" button, which should compile and run the bot. Leave it running.
-   - The first time you click it, you may be given a dialog to set up the configuration. Click the "Run" button in the dialog to continue.
+1. Edit the code as you see fit, and then compile
 1. In RLBotGUI, put the bot on a team and start the match.
 
 ## Upgrades

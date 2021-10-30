@@ -17,15 +17,14 @@ Set up RLBotGUI
 
 ### Using Visual Studio
 1. Install Visual Studio 2019 16.8 or newer.
-1. Open CSharpBot\Bot.sln in Visual Studio.
-1. In Visual Studio, click the "Start" button, 
+1. Open Bot.sln in Visual Studio.
+1. Edit the code as you see fit, and then compile 
 1. In RLBotGUI, put the bot on a team and start the match.
 
 ### Using Rider
 1. Install Rider. If you do not have Visual Studio installed alongside Rider, follow [this article](https://rider-support.jetbrains.com/hc/en-us/articles/207288089-Using-Rider-under-Windows-without-Visual-Studio-prerequisites) to set up Rider.
-1. Open Bot\Bot.sln in Rider.
-1. In Rider, click the "Run Default" button, which should compile and run the bot. Leave it running.
-   - The first time you click it, you may be given a dialog to set up the configuration. Click the "Run" button in the dialog to continue.
+1. Open Bot.sln in Rider.
+1. Edit the code as you see fit, and then compile
 1. In RLBotGUI, put the bot on a team and start the match.
 
 ## Upgrades
@@ -49,6 +48,7 @@ your bot will work right in the next tournament!
 - Bot name, description, etc, is configured by `Bot.cfg`
 - Bot strategy is controlled by `Bot/Bot.cs`
 - Bot appearance is controlled by `Loadouts/loadout_generator.py`
+- To make your bot run as fast as possible, build it in release mode, and then change the "executable_path" in `Bot.cfg` to `./Bot/bin/Debug/net5.0/Bot.exe`
 - See the [wiki](https://github.com/RLBot/RLBotCSharpExample/wiki) for tips to improve your programming experience.
 - If you'd like to keep up with bot strategies and bot tournaments, join our [Discord server](https://discord.gg/q9pbsWz). It's the heart of the RLBot community!
 
@@ -63,4 +63,4 @@ Then, the C# bot server controls the bot through the `RLBot_Core_Interface` DLL.
 
 -  [ddthj/GoslingUtils](https://github.com/ddthj/GoslingUtils) for inspiration on some of the structure and code (which I ported to c#)
 -  [VirxEC/VirxERLU](https://github.com/VirxEC/VirxERLU) for the basis of my aerial code (which I ported to c#)
--  [Darxeal/BotimusPrime](https://github.com/Darxeal/BotimusPrime) for inspiration on some of the driving code (which I ported to c#)
+-  [Darxeal/BotimusPrime](https://github.com/Darxeal/BotimusPrime) for inspiration on some of the structure and driving code (which I ported to c#)

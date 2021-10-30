@@ -9,7 +9,7 @@ namespace RedUtils
 		/// <summary>The minimum room for error for any shot. 
 		/// <para>For example, an error of 0 would mean shots with a very extreme angle, with zero room for error, would be allowed</para>
 		/// </summary>
-		private const float MinError = 100f;
+		private const float MinError = 50f;
 
 		/// <summary>The top left point of the target
 		/// <para>Note that the ball has to fit between the points, meaning the points have to be far enough apart for a ball to fit between them</para>
@@ -52,12 +52,15 @@ namespace RedUtils
 			Vec3 goalLine = (BottomRight - TopLeft).FlatNorm();
 			GetCorrectedLimits(ballLocation, out Vec3 correctedLeft, out Vec3 correctedRight, out Vec3 correctedTop, out Vec3 correctedBottom);
 
+			float width = correctedLeft.FlatDist(correctedRight);
+			float height = MathF.Abs(correctedLeft.z - correctedRight.z);
 			Vec3 horizontalPerp = (correctedLeft - correctedRight).Cross(Vec3.Up).Normalize();
 			Vec3 verticalPerp = (correctedTop - correctedBottom).Cross(goalLine).Normalize();
 			Vec3 ballToHorizontalCenter = (correctedLeft + correctedRight) / 2 - ballLocation;
 			Vec3 ballToVerticalCenter = (correctedTop + correctedBottom) / 2 - ballLocation;
 
-			return ballToHorizontalCenter.Dot(-horizontalPerp) > MinError && ballToVerticalCenter.Dot(-verticalPerp) > MinError;
+			return (ballToHorizontalCenter.Normalize().Dot(-horizontalPerp) * width > MinError || ballToHorizontalCenter.Length() < width / 2) && 
+					(ballToVerticalCenter.Normalize().Dot(-verticalPerp) * height > MinError || ballToVerticalCenter.Length() < height / 2);
 		}
 
 		/// <summary>Returns the easiest point to shoot at on the target

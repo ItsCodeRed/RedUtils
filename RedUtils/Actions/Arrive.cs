@@ -110,6 +110,7 @@ namespace RedUtils
 			// Calculates various important values
 			float distance = Distance(bot.Me);
 			float carSpeed = bot.Me.Velocity.Length();
+			float targetSpeed = distance / TimeRemaining;
 
 			// Calculates how much time we have before we should arrive
 			TimeRemaining = ArrivalTime < 0 ? distance / Car.MaxSpeed : MathF.Max(ArrivalTime - Game.Time, 0.001f);
@@ -130,7 +131,7 @@ namespace RedUtils
 				float shift = MathF.Min(Field.DistanceBetweenPoints(Target, bot.Me.Location) * 0.6f, Utils.Cap(carSpeed, 1410, Car.MaxSpeed) * 1.5f);
 				float turnRadius = Drive.TurnRadius(Utils.Cap(carSpeed, 500, Car.MaxSpeed)) * 1.2f;
 
-				shift *= Utils.Cap((shift - additionalShift) / turnRadius, 0f, 1f);
+				shift *= targetSpeed < 2200 ? Utils.Cap((shift - additionalShift) / turnRadius, 0f, 1f) : 0;
 
 				// Shifts the target such that the direction it is shifted is not on the other side of the final target relative to the car
 				Vec3 leftDirection = directionToTarget.Cross(surfaceNormal).Normalize();
@@ -149,7 +150,7 @@ namespace RedUtils
 			// Only allow dodges if we are sure we won't land too far over, and that we have enough time to recover
 			Drive.AllowDodges = MathF.Sign(predictedLocation.FlatDirection(Target).Dot(Direction.Cross())) == MathF.Sign(bot.Me.Location.FlatDirection(Target).Dot(Direction.Cross())) && timeLeft > 1.35f + RecoveryTime;
 			Drive.Target = shiftedTarget;
-			Drive.TargetSpeed = distance / TimeRemaining;
+			Drive.TargetSpeed = targetSpeed;
 			Drive.Run(bot); // Drive towards the shifted target
 
 			// If the drive sub action isn't interruptible, then this action isn't interruptible either

@@ -84,7 +84,7 @@ namespace RedUtils
 			// Calculates the shot direction, and target location
 			ballAfterHit.velocity = (carFinVel + Slice.Velocity * 2) / 3;
 			ShotDirection = ballAfterHit.PredictLocation(timeToScore).Direction(ShotTarget);
-			TargetLocation = Slice.Location - ShotDirection * 160;
+			TargetLocation = Slice.Location - ShotDirection * 155;
 
 			// Gets the surface normal, for the closest surface to the target location
 			Vec3 normal = Field.NearestSurface(TargetLocation).Normal;
@@ -93,9 +93,9 @@ namespace RedUtils
 			float distFromSurface = (TargetLocation - Field.LimitToNearestSurface(TargetLocation)).Dot(normal);
 			if (distFromSurface < 50)
 			{
-				float angle = MathF.Asin(Utils.Cap((distFromSurface - 50) / 160, -1, 1));
+				float angle = MathF.Asin(Utils.Cap((distFromSurface - 50) / 155, -1, 1));
 				ShotDirection = (ShotDirection.FlatNorm(normal) * MathF.Cos(angle) + normal * MathF.Sin(angle)).Normalize();
-				TargetLocation = Slice.Location - ShotDirection * 160;
+				TargetLocation = Slice.Location - ShotDirection * 155;
 			}
 		}
 
@@ -189,11 +189,11 @@ namespace RedUtils
 				}
 
 				// If the aerial is finished, or is no longer possible, stop it
-				if (timeRemaining <= 0f || (_jumped && offset.Length() > 50 && requiredAccel * 0.8f > Car.AirThrottleAccel && (bot.Me.Boost == 0 || requiredAccel * 0.8f > (Car.BoostAccel + Car.AirThrottleAccel))) || (!ShotValid() && timeRemaining > 0.5f) || (bot.Me.IsGrounded && _jumped))
+				if (timeRemaining <= 0f || (_jumped && offset.Length() > 50 && timeRemaining > 0.5f && requiredAccel * 0.8f > Car.AirThrottleAccel && (bot.Me.Boost == 0 || requiredAccel * 0.8f > (Car.BoostAccel + Car.AirThrottleAccel))) || (!ShotValid() && timeRemaining > 0.5f) || (bot.Me.IsGrounded && _jumped))
 				{
 					Finished = true;
 				}
-				else if (((!DoubleJumping && _elapsedTime < 1.45f) || (!bot.Me.HasJumped && _jumped)) && timeRemaining < 0.1f)
+				else if (((!DoubleJumping && _elapsedTime < 1.45f) || (!bot.Me.HasJumped && _jumped)) && timeRemaining < 0.1f && offset.Length() < 100)
 				{
 					// If it's possible to dodge before hitting the ball, why not do it?
 					bot.Action = new Dodge(ShotDirection.FlatNorm(), 0.1f);

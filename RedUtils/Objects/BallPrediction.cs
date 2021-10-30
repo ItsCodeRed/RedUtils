@@ -29,11 +29,11 @@ namespace RedUtils
         {
             if (Length > 0)
             {
-                for (int i = 20; i < Length; i += 20)
+                for (int i = 6; i < Length; i += 6)
                 {
                     if (predicate(Slices[i]))
                     {
-                        for (int j = i - 20; j < i; j++)
+                        for (int j = i - 6; j < i; j++)
                         {
                             if (MathF.Abs(Slices[j].Location.y) > 5250) break;
                             if (predicate(Slices[j]))

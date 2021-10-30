@@ -201,7 +201,7 @@ namespace RedUtils
 				}
 
 				// Only boost when we are facing our target, and when we really need to
-				bot.Controller.Boost = bot.Controller.Boost && (angleToTarget < 0.3f || (angleToTarget < 0.8f && !bot.Me.IsGrounded)) && !Backwards && (WasteBoost || carSpeed <= 1200);
+				bot.Controller.Boost = bot.Controller.Boost && (angleToTarget < 0.3f || (angleToTarget < 0.8f && !bot.Me.IsGrounded)) && !Backwards && WasteBoost;
 				// Drift if the target is behind us, or when we need to turn really sharply
 				bot.Controller.Handbrake = (MathF.Abs(angleToTarget) > 2 || (Field.DistanceBetweenPoints(nearestTurnCenter, Target) < turnRadius - 40 && SpeedFromTurnRadius(TurnRadius(bot.Me, Target)) < 400))
 											&& mySurface.Normal.Dot(Vec3.Up) > 0.9f && bot.Me.Velocity.Normalize().Dot(bot.Me.Forward) > 0.9f;
@@ -213,6 +213,7 @@ namespace RedUtils
 				Vec3 predictedLocation = bot.Me.LocationAfterDodge();
 				// Estimates how much time we have to dodge
 				float timeLeft = bot.Me.Location.FlatDist(finalTarget) / MathF.Max(carSpeed + 500, 1410);
+				float speedFlipTimeLeft = bot.Me.Location.FlatDist(finalTarget) / MathF.Max(carSpeed + 500 + MathF.Min(bot.Me.Boost, 40) * Car.BoostAccel / 2, 1410);
 
 				if (AllowDodges && Field.InField(predictedLocation, 50) && carSpeed < 2000 && bot.Me.Location.z < 600 && Game.Gravity.z < -500 && MathF.Abs(bot.Me.Velocity.Dot(bot.Me.Up)) < 100)
 				{
@@ -227,7 +228,7 @@ namespace RedUtils
 								// If we are on the ground, we rule out wavedashes, and look at dodges
 								Dodge dodge = new Dodge(bot.Me.Location.FlatDirection(Target));
 
-								if (timeLeft > SpeedFlip.Duration && bot.Me.Boost > 0 && Field.InField(predictedLocation, 500) && WasteBoost)
+								if (speedFlipTimeLeft > SpeedFlip.Duration && bot.Me.Boost > 0 && Field.InField(predictedLocation, 500) && WasteBoost)
 								{ 
 									// Only speedflip if we have time, and have boost
 									Action = new SpeedFlip(bot.Me.Location.FlatDirection(Target));
@@ -337,10 +338,10 @@ namespace RedUtils
 				// If we are on the ground, we need to make sure not to hit the post on accident
 				Goal goal = Field.Side(bot.Team) == MathF.Sign(finalTarget.y) ? bot.OurGoal : bot.TheirGoal;
 
-				Vec3 enterLeftDirection = bot.Me.Location.Direction(goal.LeftPost - new Vec3(MathF.Sign(goal.LeftPost.x) * 50, MathF.Sign(goal.LeftPost.y) * 50));
-				Vec3 enterRightDirection = bot.Me.Location.Direction(goal.RightPost - new Vec3(MathF.Sign(goal.RightPost.x) * 50, MathF.Sign(goal.RightPost.y) * 50));
-				Vec3 exitLeftDirection = bot.Me.Location.Direction(goal.LeftPost + new Vec3(MathF.Sign(goal.LeftPost.x) * 100, -MathF.Sign(goal.LeftPost.y) * 50));
-				Vec3 exitRightDirection = bot.Me.Location.Direction(goal.RightPost + new Vec3(MathF.Sign(goal.RightPost.x) * 100, -MathF.Sign(goal.RightPost.y) * 50));
+				Vec3 enterLeftDirection = bot.Me.Location.Direction(goal.LeftPost - new Vec3(MathF.Sign(goal.LeftPost.x) * 100, MathF.Sign(goal.LeftPost.y) * 50));
+				Vec3 enterRightDirection = bot.Me.Location.Direction(goal.RightPost - new Vec3(MathF.Sign(goal.RightPost.x) * 100, MathF.Sign(goal.RightPost.y) * 50));
+				Vec3 exitLeftDirection = bot.Me.Location.Direction(goal.LeftPost + new Vec3(MathF.Sign(goal.LeftPost.x) * 60, -MathF.Sign(goal.LeftPost.y) * 50));
+				Vec3 exitRightDirection = bot.Me.Location.Direction(goal.RightPost + new Vec3(MathF.Sign(goal.RightPost.x) * 60, -MathF.Sign(goal.RightPost.y) * 50));
 
 				// Clamps the target direction so if the target is in the goal, we enter the goal without hitting the post
 				// and if it's not in the goal we make sure we avoid the goal, and the posts
@@ -356,8 +357,8 @@ namespace RedUtils
 				// If we are in a goal, we gotta make sure not to hit the posts on our way out
 				Goal goal = Field.Side(bot.Team) == MathF.Sign(bot.Me.Location.y) ? bot.OurGoal : bot.TheirGoal;
 
-				Vec3 leftDirection = bot.Me.Location.Direction(goal.LeftPost - new Vec3(MathF.Sign(goal.LeftPost.x) * 50, MathF.Sign(goal.LeftPost.y) * 50));
-				Vec3 rightDirection = bot.Me.Location.Direction(goal.RightPost - new Vec3(MathF.Sign(goal.RightPost.x) * 50, MathF.Sign(goal.RightPost.y) * 50));
+				Vec3 leftDirection = bot.Me.Location.Direction(goal.LeftPost - new Vec3(MathF.Sign(goal.LeftPost.x) * 100, MathF.Sign(goal.LeftPost.y) * 50));
+				Vec3 rightDirection = bot.Me.Location.Direction(goal.RightPost - new Vec3(MathF.Sign(goal.RightPost.x) * 100, MathF.Sign(goal.RightPost.y) * 50));
 
 				// Clamps the target direction between the goal posts, so we don't hit them
 				Vec3 targetDirection = bot.Me.Location.Direction(finalTarget).Clamp(rightDirection, leftDirection, mySurface.Normal);
@@ -521,23 +522,23 @@ namespace RedUtils
 			if (backwards)
 			{
 				// Calculates the speed it will be moving at after the turn
-				float speed = MathF.Max(SpeedAfterTurn(-currentSpeed, angle, 0.8f), 1410);
+				float speed = MathF.Max(SpeedAfterTurn(-currentSpeed, angle, 0.8f), 1400);
 				// Estimates how long it will take to drive to the target backwards
 				return landingTime + turnDistance / MathF.Max(SpeedFromTurnRadius(radius), 400) + distance / speed;
 			}
 			else
 			{
 				// Calculates the minimum speed of the car after the turn
-				float minSpeed = MathF.Max(SpeedAfterTurn(currentSpeed, angle), 1410);
+				float minSpeed = MathF.Max(SpeedAfterTurn(currentSpeed, angle), 1400);
 				// Calculates the maximum possible speed of the car after the turn
-				float finSpeed = Utils.Cap(minSpeed + Car.BoostAccel * car.Boost / Car.BoostConsumption, 1410, Car.MaxSpeed);
+				float finSpeed = Utils.Cap(minSpeed + Car.BoostAccel * car.Boost / Car.BoostConsumption, 1400, Car.MaxSpeed);
 				// Calculates the maximum possible distance covered while boosting
 				float distanceWhileBoosting = (MathF.Pow(finSpeed, 2) - MathF.Pow(minSpeed, 2)) / (2 * Car.BoostAccel);
 
 				if (distance < distanceWhileBoosting)
 				{
 					// Calculates the actual maxmimum speed of the car after the turn
-					finSpeed = Utils.Cap(MathF.Sqrt(MathF.Max(MathF.Pow(minSpeed, 2) + 2 * Car.BoostAccel * distance, 0)), 1410, Car.MaxSpeed);
+					finSpeed = Utils.Cap(MathF.Sqrt(MathF.Max(MathF.Pow(minSpeed, 2) + 2 * Car.BoostAccel * distance, 0)), 1400, Car.MaxSpeed);
 					// Estimates how long it will take to drive to the target while boosting
 					return landingTime + turnDistance / MathF.Max(SpeedFromTurnRadius(radius), 400) + distance / ((minSpeed + finSpeed) / 2);
 				}

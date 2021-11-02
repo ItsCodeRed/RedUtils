@@ -110,10 +110,12 @@ namespace RedUtils
 			// Calculates various important values
 			float distance = Distance(bot.Me);
 			float carSpeed = bot.Me.Velocity.Length();
-			float targetSpeed = distance / TimeRemaining;
 
 			// Calculates how much time we have before we should arrive
 			TimeRemaining = ArrivalTime < 0 ? distance / Car.MaxSpeed : MathF.Max(ArrivalTime - Game.Time, 0.001f);
+
+			// Based on the time remaining, calculate our target speed
+			float targetSpeed = distance / TimeRemaining;
 
 			// Predicts (roughly) the location of the car after dodging
 			Vec3 predictedLocation = bot.Me.LocationAfterDodge();

@@ -7,7 +7,7 @@ using RLBotDotNet;
 /* 
  * This file extends the RUBot class with some extra tools that make bot creation easier.
  * You probably won't want to edit to much in here, except the ShotCheck functions.
- * You are encourged to make your own, although feel free to continue using the default one if you like.
+ * You are encouraged to make your own, although feel free to continue using the default one if you like.
  */
 
 namespace RedUtils
@@ -95,18 +95,7 @@ namespace RedUtils
 
 		/// <summary>Throttles and boosts to reach the given target speed</summary>
 		/// <returns>The current forward speed of the car</returns>
-		public float Throttle(float targetSpeed)
-		{
-			float carSpeed = Me.Forward.Dot(Me.Velocity); // The car's speed in the forward direction
-			float speedDiff = targetSpeed - carSpeed;
-			Controller.Throttle = Utils.Cap(MathF.Pow(speedDiff, 2) * MathF.Sign(speedDiff) / 1000, -1, 1);
-			Controller.Boost = targetSpeed > 1400 && speedDiff > 50 && carSpeed < 2250 && Controller.Throttle == 1;
-			return carSpeed;
-		}
-
-		/// <summary>Throttles and boosts to reach the given target speed</summary>
-		/// <returns>The current forward speed of the car</returns>
-		public float Throttle(float targetSpeed, bool backwards)
+		public float Throttle(float targetSpeed, bool backwards = false)
 		{
 			float carSpeed = Me.Local(Me.Velocity).x; // The car's speed in the forward direction
 			float speedDiff = (targetSpeed * (backwards ? -1 : 1)) - carSpeed;
@@ -116,73 +105,13 @@ namespace RedUtils
 		}
 
 		/// <summary>Turns to face a given target</summary>
-		/// <returns>The target angles for pitch, yaw, and roll</returns>
-		public float[] AimAt(Vec3 targetLocation)
-		{
-			Vec3 localTarget = Me.Local(targetLocation - Me.Location); // Where our target is in local coordinates
-			Vec3 localUp = Me.Local(Vec3.Up); // Where "up" is in local coordinates
-			float[] targetAngles = new float[3] {
-				MathF.Atan2(localTarget.z, localTarget.x), // Angle to pitch towards target
-				MathF.Atan2(localTarget.y, localTarget.x), // Angle to yaw towards target
-				MathF.Atan2(localUp.y, localUp.z) // Angle to roll upright
-			};
-			// Now that we have the angles we need to rotate, we feed them into the PD loops to determine the controller inputs
-			Controller.Steer = SteerPD(targetAngles[1], -Me.LocalAngularVelocity[2] * 0.01f);
-			Controller.Pitch = SteerPD(targetAngles[0], Me.LocalAngularVelocity[1] * 0.2f);
-			Controller.Yaw = SteerPD(targetAngles[1], -Me.LocalAngularVelocity[2] * 0.15f);
-			Controller.Roll = SteerPD(targetAngles[2], Me.LocalAngularVelocity[0] * 0.25f);
-
-			return targetAngles; // Returns the angles, which could be useful for other purposes
-		}
-
-		/// <summary>Turns to face a given target</summary>
-		/// <returns>The target angles for pitch, yaw, and roll</returns>
-		public float[] AimAt(Vec3 targetLocation, bool backwards)
-		{
-			Vec3 localTarget = Me.Local(targetLocation - Me.Location) * (backwards ? -1 : 1); // Where our target is in local coordinates
-			Vec3 localUp = Me.Local(Vec3.Up); // Where "up" is in local coordinates
-			float[] targetAngles = new float[3] {
-				MathF.Atan2(localTarget.z, localTarget.x), // Angle to pitch towards target
-				MathF.Atan2(localTarget.y, localTarget.x), // Angle to yaw towards target
-				MathF.Atan2(localUp.y, localUp.z) // Angle to roll upright
-			};
-			// Now that we have the angles we need to rotate, we feed them into the PD loops to determine the controller inputs
-			Controller.Steer = SteerPD(targetAngles[1], -Me.LocalAngularVelocity[2] * 0.01f) * (backwards ? -1 : 1);
-			Controller.Pitch = SteerPD(targetAngles[0], Me.LocalAngularVelocity[1] * 0.2f);
-			Controller.Yaw = SteerPD(targetAngles[1], -Me.LocalAngularVelocity[2] * 0.15f);
-			Controller.Roll = SteerPD(targetAngles[2], Me.LocalAngularVelocity[0] * 0.25f);
-
-			return targetAngles; // Returns the angles, which could be useful for other purposes
-		}
-
-		/// <summary>Turns to face a given target</summary>
 		/// <param name="up">Which direction to face your roof</param>
 		/// <returns>The target angles for pitch, yaw, and roll</returns>
-		public float[] AimAt(Vec3 targetLocation, Vec3 up)
-		{
-			Vec3 localTarget = Me.Local(targetLocation - Me.Location); // Where our target is in local coordinates
-			Vec3 localUp = Me.Local(up.Normalize()); // Where "up" is in local coordinates
-			float[] targetAngles = new float[3] {
-				MathF.Atan2(localTarget.z, localTarget.x), // Angle to pitch towards target
-				MathF.Atan2(localTarget.y, localTarget.x), // Angle to yaw towards target
-				MathF.Atan2(localUp.y, localUp.z) // Angle to roll upright
-			};
-			// Now that we have the angles we need to rotate, we feed them into the PD loops to determine the controller inputs
-			Controller.Steer = SteerPD(targetAngles[1], -Me.LocalAngularVelocity[2] * 0.01f);
-			Controller.Pitch = SteerPD(targetAngles[0], Me.LocalAngularVelocity[1] * 0.2f);
-			Controller.Yaw = SteerPD(targetAngles[1], -Me.LocalAngularVelocity[2] * 0.15f);
-			Controller.Roll = SteerPD(targetAngles[2], Me.LocalAngularVelocity[0] * 0.25f);
-
-			return targetAngles; // Returns the angles, which could be useful for other purposes
-		}
-
-		/// <summary>Turns to face a given target</summary>
-		/// <param name="up">Which direction to face your roof</param>
-		/// <returns>The target angles for pitch, yaw, and roll</returns>
-		public float[] AimAt(Vec3 targetLocation, Vec3 up, bool backwards)
+		public float[] AimAt(Vec3 targetLocation, Vec3 up = new(), bool backwards = false)
 		{
 			Vec3 localTarget = Me.Local(targetLocation - Me.Location) * (backwards ? -1 : 1); // Where our target is in local coordinates
-			Vec3 localUp = Me.Local(up.Normalize()); // Where "up" is in local coordinates
+			Vec3 safeUp = up.Length() != 0 ? up : Vec3.Up; // Make sure "up" is not the zero vector (which is the default argument)
+			Vec3 localUp = Me.Local(safeUp.Normalize()); // Where "up" is in local coordinates
 			float[] targetAngles = new float[3] {
 				MathF.Atan2(localTarget.z, localTarget.x), // Angle to pitch towards target
 				MathF.Atan2(localTarget.y, localTarget.x), // Angle to yaw towards target

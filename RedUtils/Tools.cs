@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.Numerics;
 using System.Collections.Generic;
+using System.Linq;
 using RedUtils.Math;
 using RLBotDotNet;
 
@@ -25,7 +27,7 @@ namespace RedUtils
 		/// <param name="scaleY">The vertical scale of the text</param>
 		public void DrawText2D(string text, Color color, Vec3 upperLeftPoint, int scaleX, int scaleY)
 		{
-			System.Numerics.Vector2 drawPoint = new System.Numerics.Vector2(upperLeftPoint.x, upperLeftPoint.y);
+			Vector2 drawPoint = new Vector2(upperLeftPoint.x, upperLeftPoint.y);
 			Renderer.DrawString2D(text, color, drawPoint, scaleX, scaleY);
 		}
 
@@ -37,7 +39,7 @@ namespace RedUtils
 		/// <param name="scaleY">The vertical scale of the text</param>
 		public void DrawText3D(string text, Color color, Vec3 upperLeftPoint, int scaleX, int scaleY)
 		{
-			System.Numerics.Vector3 drawPoint = new System.Numerics.Vector3(upperLeftPoint.x, upperLeftPoint.y, upperLeftPoint.z);
+			Vector3 drawPoint = new Vector3(upperLeftPoint.x, upperLeftPoint.y, upperLeftPoint.z);
 			Renderer.DrawString3D(text, color, drawPoint, scaleX, scaleY);
 		}
 
@@ -47,8 +49,8 @@ namespace RedUtils
 		/// <param name="color">The color of the line</param>
 		public void DrawLine2D(Vec3 startPoint, Vec3 endPoint, Color color)
 		{
-			System.Numerics.Vector2 _startPoint = new System.Numerics.Vector2(startPoint.x, startPoint.y);
-			System.Numerics.Vector2 _endPoint = new System.Numerics.Vector2(endPoint.x, endPoint.y);
+			Vector2 _startPoint = new Vector2(startPoint.x, startPoint.y);
+			Vector2 _endPoint = new Vector2(endPoint.x, endPoint.y);
 			Renderer.DrawLine2D(color, _startPoint, _endPoint);
 		}
 
@@ -58,8 +60,8 @@ namespace RedUtils
 		/// <param name="color">The color of the line</param>
 		public void DrawLine3D(Vec3 startPoint, Vec3 endPoint, Color color)
 		{
-			System.Numerics.Vector3 _startPoint = new System.Numerics.Vector3(startPoint.x, startPoint.y, startPoint.z);
-			System.Numerics.Vector3 _endPoint = new System.Numerics.Vector3(endPoint.x, endPoint.y, endPoint.z);
+			Vector3 _startPoint = new Vector3(startPoint.x, startPoint.y, startPoint.z);
+			Vector3 _endPoint = new Vector3(endPoint.x, endPoint.y, endPoint.z);
 			Renderer.DrawLine3D(color, _startPoint, _endPoint);
 		}
 
@@ -68,14 +70,7 @@ namespace RedUtils
 		/// <param name="color">The color of the lines</param>
 		public void DrawPolyLine2D(Vec3[] points, Color color)
 		{
-			System.Numerics.Vector2[] numericPoints = new System.Numerics.Vector2[points.Length];
-
-			for (int i = 0; i < points.Length; i++)
-			{
-				numericPoints[i] = new System.Numerics.Vector2(points[i].x, points[i].y);
-			}
-
-			Renderer.DrawPolyLine2D(color, numericPoints);
+			Renderer.DrawPolyLine2D(color, points.Select(vec => new Vector2(vec.x, vec.y)).ToArray());
 		}
 
 		/// <summary>Draws a bunch of 3D lines that connect the points. Kinda like a connect the dots puzzle!</summary>
@@ -83,14 +78,7 @@ namespace RedUtils
 		/// <param name="color">The color of the lines</param>
 		public void DrawPolyLine3D(Vec3[] points, Color color)
 		{
-			System.Numerics.Vector3[] numericPoints = new System.Numerics.Vector3[points.Length];
-
-			for (int i = 0; i < points.Length; i++)
-			{
-				numericPoints[i] = new System.Numerics.Vector3(points[i].x, points[i].y, points[i].z);
-			}
-
-			Renderer.DrawPolyLine3D(color, numericPoints);
+			Renderer.DrawPolyLine3D(color, points.Select(vec => new Vector3(vec.x, vec.y, vec.z)).ToArray());
 		}
 
 		/// <summary>Throttles and boosts to reach the given target speed</summary>

@@ -52,5 +52,36 @@ namespace RedUtils.Math
 		{
 			return new Vec3(Forward.Dot(v), Right.Dot(v), Up.Dot(v));
 		}
+
+		public Mat3x3 Transpose()
+		{
+			return new Mat3x3(
+				new Vec3(Forward.x, Right.x, Up.x),
+				new Vec3(Forward.y, Right.y, Up.y),
+				new Vec3(Forward.z, Right.z, Up.z)
+			);
+		}
+
+		public static Mat3x3 RotationFromAxis(Vec3 axis, float angle)
+		{
+			float cos = MathF.Cos(angle);
+			float sin = MathF.Sin(angle);
+			float n1Cos = 1F - cos;
+			Vec3 u = axis.Normalize();
+			return new Mat3x3(
+				new Vec3(
+					cos + u.x * u.x * n1Cos, 
+					u.x * u.y * n1Cos - u.z * sin,
+					u.x * u.z * n1Cos + u.y * sin),
+				new Vec3(
+					u.y * u.x * n1Cos + u.z * sin,
+					cos + u.y * u.y * n1Cos,
+					u.y * u.z * n1Cos - u.x * sin),
+				new Vec3(
+					u.z * u.x * n1Cos - u.y * sin,
+					u.z * u.y * n1Cos + u.x * sin,
+					cos + u.z * u.z * n1Cos)
+			);
+		}
 	}
 }

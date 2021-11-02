@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Timers;
 using System.Collections.Generic;
+using RedUtils.Math;
 using RLBotDotNet;
 using rlbot.flat;
+using Color = System.Drawing.Color;
 
 namespace RedUtils
 {
@@ -12,6 +14,8 @@ namespace RedUtils
 	/// </summary>
 	public abstract partial class RUBot : Bot
 	{
+		public new ExtendedRenderer Renderer { get; internal set; }
+
 		/// <summary>Your car</summary>
 		public Car Me => Index < Cars.Count ? Cars.AllCars[Index] : new Car();
 
@@ -81,6 +85,7 @@ namespace RedUtils
 		/// <param name="packet">Contains all information about the current game state</param>
 		private void GetReady(GameTickPacket packet)
 		{
+			Renderer = new ExtendedRenderer(base.Renderer);
 			Field.Initialize(GetFieldInfo());
 			Cars.Initialize(packet);
 			_ready = true;

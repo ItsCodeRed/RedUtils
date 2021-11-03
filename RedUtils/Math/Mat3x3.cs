@@ -53,6 +53,7 @@ namespace RedUtils.Math
 			return new Vec3(Forward.Dot(v), Right.Dot(v), Up.Dot(v));
 		}
 
+		/// <summary>Returns the transpose of this matrix</summary>
 		public Mat3x3 Transpose()
 		{
 			return new Mat3x3(
@@ -62,6 +63,7 @@ namespace RedUtils.Math
 			);
 		}
 
+		/// <summary>Returns the rotation matrix that will rotate its target around the given axis by the given angle</summary>
 		public static Mat3x3 RotationFromAxis(Vec3 axis, float angle)
 		{
 			float cos = MathF.Cos(angle);

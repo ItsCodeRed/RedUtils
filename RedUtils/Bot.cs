@@ -8,12 +8,13 @@ using Color = System.Drawing.Color;
 
 namespace RedUtils
 {
-	/// <summary>The main class in RedUitls. 
+	/// <summary>The main class in RedUtils. 
 	/// <para>It contains properties that are unique to your bot, such as your bot's car, your teammates, etc.</para>
 	/// <para>It also receives the GameTickPacket from the RLBot framework, and processes all the data in it.</para>
 	/// </summary>
 	public abstract partial class RUBot : Bot
 	{
+		/// <summary>A tool to draw debug lines in-game</summary>
 		public new ExtendedRenderer Renderer { get; internal set; }
 
 		/// <summary>Your car</summary>

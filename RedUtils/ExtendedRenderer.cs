@@ -3,7 +3,10 @@
  */
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using RedUtils.Math;
 using RLBotDotNet.Renderer;
@@ -60,29 +63,15 @@ namespace RedUtils
         }
 
         /// <summary>Draws a line in world space consisting between each pair of points in the given array</summary>
-        public void Polyline3D(Vec3[] points, Color? color = null)
+        public void Polyline3D(IEnumerable<Vec3> points, Color? color = null)
         {
-            Vector3[] numericPoints = new Vector3[points.Length];
-
-            for (int i = 0; i < points.Length; i++)
-            {
-                numericPoints[i] = new Vector3(points[i].x, points[i].y, points[i].z);
-            }
-
-            _renderer.DrawPolyLine3D(color ?? Color, numericPoints);
+            _renderer.DrawPolyLine3D(color ?? Color, points.Select(NumVec).ToArray());
         }
 
         /// <summary>Draws a line in screen space consisting between each pair of points in the given array</summary>
-        public void Polyline2D(Vec3[] points, Color? color = null)
+        public void Polyline2D(IEnumerable<Vec3> points, Color? color = null)
         {
-            Vector2[] numericPoints = new Vector2[points.Length];
-
-            for (int i = 0; i < points.Length; i++)
-            {
-                numericPoints[i] = new Vector2(points[i].x, points[i].y);
-            }
-
-            _renderer.DrawPolyLine2D(color ?? Color, numericPoints);
+            _renderer.DrawPolyLine2D(color ?? Color, points.Select(NumVec2).ToArray());
         }
 
         /// <summary>Draws a circle</summary>

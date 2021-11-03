@@ -48,5 +48,27 @@ namespace RedUtils
 
             return null;
         }
+        
+        /// <summary>Finds the first ball slice that is scoring in favor of the parameter team </summary>
+        public BallSlice FindGoal(int team)
+        {
+            int side = 1 - 2 * team;
+            if (Length > 0)
+            {
+                for (int i = 6; i < Length; i += 6)
+                {
+                    if (Slices[i].Location.y * side > 5250)
+                    {
+                        for (int j = i - 6; j < i; j++)
+                        {
+                            if (Slices[j].Location.y * side > 5250) 
+                                return Slices[j];
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

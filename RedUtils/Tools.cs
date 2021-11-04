@@ -19,68 +19,6 @@ namespace RedUtils
 		/// <summary>Encapsulates a function that finds the best shot for any ball slice, and target.</summary>
 		public delegate Shot ShotCheck(BallSlice slice, Target target);
 
-		/// <summary>Draws 2D text onto the screen</summary>
-		/// <param name="text">The text you want printed</param>
-		/// <param name="color">The color of the text</param>
-		/// <param name="upperLeftPoint">The upper left corner point of the text. (0, 0) is the top left of the screen</param>
-		/// <param name="scaleX">The horizontal scale of the text</param>
-		/// <param name="scaleY">The vertical scale of the text</param>
-		public void DrawText2D(string text, Color color, Vec3 upperLeftPoint, int scaleX, int scaleY)
-		{
-			Vector2 drawPoint = new Vector2(upperLeftPoint.x, upperLeftPoint.y);
-			Renderer.DrawString2D(text, color, drawPoint, scaleX, scaleY);
-		}
-
-		/// <summary>Draws 3D text in the world. it always faces you</summary>
-		/// <param name="text">The text you want printed</param>
-		/// <param name="color">The color of the text</param>
-		/// <param name="upperLeftPoint">The upper left corner point of the text in world space</param>
-		/// <param name="scaleX">The horizontal scale of the text</param>
-		/// <param name="scaleY">The vertical scale of the text</param>
-		public void DrawText3D(string text, Color color, Vec3 upperLeftPoint, int scaleX, int scaleY)
-		{
-			Vector3 drawPoint = new Vector3(upperLeftPoint.x, upperLeftPoint.y, upperLeftPoint.z);
-			Renderer.DrawString3D(text, color, drawPoint, scaleX, scaleY);
-		}
-
-		/// <summary>Draws a 2D line onto the screen</summary>
-		/// <param name="startPoint">The start point of the line. (0, 0) is the top left of the screen</param>
-		/// <param name="endPoint">The end point of the line. (0, 0) is the top left of the screen</param>
-		/// <param name="color">The color of the line</param>
-		public void DrawLine2D(Vec3 startPoint, Vec3 endPoint, Color color)
-		{
-			Vector2 _startPoint = new Vector2(startPoint.x, startPoint.y);
-			Vector2 _endPoint = new Vector2(endPoint.x, endPoint.y);
-			Renderer.DrawLine2D(color, _startPoint, _endPoint);
-		}
-
-		/// <summary>Draws a 3D line in the world</summary>
-		/// <param name="startPoint">The start point of the line in world space</param>
-		/// <param name="endPoint">The end point of the line in world space</param>
-		/// <param name="color">The color of the line</param>
-		public void DrawLine3D(Vec3 startPoint, Vec3 endPoint, Color color)
-		{
-			Vector3 _startPoint = new Vector3(startPoint.x, startPoint.y, startPoint.z);
-			Vector3 _endPoint = new Vector3(endPoint.x, endPoint.y, endPoint.z);
-			Renderer.DrawLine3D(color, _startPoint, _endPoint);
-		}
-
-		/// <summary>Draws a bunch of 2D lines that connect the points. Kinda like a connect the dots puzzle!</summary>
-		/// <param name="points">A list of all the points the lines go through</param>
-		/// <param name="color">The color of the lines</param>
-		public void DrawPolyLine2D(Vec3[] points, Color color)
-		{
-			Renderer.DrawPolyLine2D(color, points.Select(vec => new Vector2(vec.x, vec.y)).ToArray());
-		}
-
-		/// <summary>Draws a bunch of 3D lines that connect the points. Kinda like a connect the dots puzzle!</summary>
-		/// <param name="points">A list of all the points the lines go through</param>
-		/// <param name="color">The color of the lines</param>
-		public void DrawPolyLine3D(Vec3[] points, Color color)
-		{
-			Renderer.DrawPolyLine3D(color, points.Select(vec => new Vector3(vec.x, vec.y, vec.z)).ToArray());
-		}
-
 		/// <summary>Throttles and boosts to reach the given target speed</summary>
 		/// <returns>The current forward speed of the car</returns>
 		public float Throttle(float targetSpeed, bool backwards = false)

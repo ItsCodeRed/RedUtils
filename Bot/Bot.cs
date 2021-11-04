@@ -22,7 +22,7 @@ namespace Bot
         public override void Run()
         {
             // Prints out the current action to the screen, so we know what our bot is doing
-            DrawText2D(Action != null ? Action.ToString() : "", Color.FromArgb(255, 255, 255), new Vec3(10, 10), 5, 5);
+            Renderer.Text2D(Action != null ? Action.ToString() : "", new Vec3(10, 10), 4, Color.White);
 
             if (IsKickoff && Action == null)
             {

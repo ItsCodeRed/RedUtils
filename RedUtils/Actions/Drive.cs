@@ -207,7 +207,7 @@ namespace RedUtils
 											&& mySurface.Normal.Dot(Vec3.Up) > 0.9f && bot.Me.Velocity.Normalize().Dot(bot.Me.Forward) > 0.9f;
 
 				// Draws a debug line to represent the final target
-				bot.DrawLine3D(finalTarget, finalTarget + Field.NearestSurface(finalTarget).Normal * 200, Color.FromArgb(255, 255, 255));
+				bot.Renderer.Line3D(finalTarget, finalTarget + Field.NearestSurface(finalTarget).Normal * 200, Color.LimeGreen);
 
 				// Estimates where we'll be after dodging
 				Vec3 predictedLocation = bot.Me.LocationAfterDodge();
@@ -282,7 +282,7 @@ namespace RedUtils
 			}
 
 			// Draws a debug line to represent the target
-			bot.DrawLine3D(Field.LimitToNearestSurface(Target), Field.LimitToNearestSurface(Target) + targetSurface.Normal * 200, Color.FromArgb(0, 255, 0));
+			bot.Renderer.Line3D(Field.LimitToNearestSurface(Target), Field.LimitToNearestSurface(Target) + targetSurface.Normal * 200, Color.LimeGreen);
 			
 			// Prevents this action from being interrupted during a dodge
 			Interruptible = Action == null || Action.Interruptible;

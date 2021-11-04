@@ -112,7 +112,7 @@ namespace RedUtils
 			}
 		}
 
-		/// <summary>Returns the side of the field which belongs to the team given. (-1 for orange, 1 for blue)</summary>
+		/// <summary>Returns the side of the field which belongs to the team given. (-1 for blue, 1 for orange)</summary>
 		public static int Side(int team)
 		{
 			return 2 * team - 1;

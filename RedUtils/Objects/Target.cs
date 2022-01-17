@@ -59,8 +59,9 @@ namespace RedUtils
 			Vec3 ballToHorizontalCenter = (correctedLeft + correctedRight) / 2 - ballLocation;
 			Vec3 ballToVerticalCenter = (correctedTop + correctedBottom) / 2 - ballLocation;
 
-			return (ballToHorizontalCenter.Normalize().Dot(-horizontalPerp) * width > MinError || ballToHorizontalCenter.Length() < width / 2) && 
-					(ballToVerticalCenter.Normalize().Dot(-verticalPerp) * height > MinError || ballToVerticalCenter.Length() < height / 2);
+			return ((ballToHorizontalCenter.Normalize().Dot(-horizontalPerp) * width > MinError || ballToHorizontalCenter.Length() < width / 2) &&
+					(ballToVerticalCenter.Normalize().Dot(-verticalPerp) * height > MinError || ballToVerticalCenter.Length() < height / 2)) ||
+					TopLeft.FlatDirection(BottomRight).Cross(Vec3.Up).Dot(ballLocation.FlatDirection((TopLeft + BottomRight) / 2)) < 0;
 		}
 
 		/// <summary>Returns the easiest point to shoot at on the target

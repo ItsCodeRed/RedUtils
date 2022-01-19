@@ -33,76 +33,10 @@ namespace RedUtils
 
 		/// <summary>Initializes a new drive action</summary>
 		/// <param name="target">The destination the car will drive to</param>
-		public Drive(Car car, Vec3 target)
-		{
-			Interruptible = true;
-			Finished = false;
-
-			Target = target;
-			TargetSpeed = Car.MaxSpeed;
-
-			float forwardsEta = GetEta(car, target, false, false);
-			float backwardsEta = GetEta(car, target, true, false);
-
-			// Only go backwards under very specific circumstances, because otherwise the bot goes backwards far too often
-			Backwards = backwardsEta + 0.5f < forwardsEta && car.Forward.Dot(car.Velocity) < 500 && car.Forward.FlatAngle(car.Location.Direction(target), car.Up) > MathF.PI * 0.6f;
-			AllowDodges = true;
-			WasteBoost = false;
-
-			Action = null;
-		}
-
-		/// <summary>Initializes a new drive action</summary>
-		/// <param name="target">The destination the car will drive to</param>
-		/// <param name="targetSpeed">The speed we intend to mantain while driving</param>
-		public Drive(Car car, Vec3 target, float targetSpeed)
-		{
-			Interruptible = true;
-			Finished = false;
-
-			Target = target;
-			TargetSpeed = targetSpeed;
-
-			float forwardsEta = GetEta(car, target, false, false);
-			float backwardsEta = GetEta(car, target, true, false);
-
-			// Only go backwards under very specific circumstances, because otherwise the bot goes backwards far too often
-			Backwards = backwardsEta + 0.5f < forwardsEta && car.Forward.Dot(car.Velocity) < 500 && car.Forward.FlatAngle(car.Location.Direction(target), car.Up) > MathF.PI * 0.6f;
-			AllowDodges = true;
-			WasteBoost = false;
-
-			Action = null;
-		}
-
-		/// <summary>Initializes a new drive action</summary>
-		/// <param name="target">The destination the car will drive to</param>
-		/// <param name="targetSpeed">The speed we intend to mantain while driving</param>
-		/// <param name="allowDodges">Whether or not we are going to allow dodges to increase speed</param>
-		public Drive(Car car, Vec3 target, float targetSpeed, bool allowDodges)
-		{
-			Interruptible = true;
-			Finished = false;
-
-			Target = target;
-			TargetSpeed = targetSpeed;
-
-			float forwardsEta = GetEta(car, target, false, false);
-			float backwardsEta = GetEta(car, target, true, false);
-
-			// Only go backwards under very specific circumstances, because otherwise the bot goes backwards far too often
-			Backwards = backwardsEta + 0.5f < forwardsEta && car.Forward.Dot(car.Velocity) < 500 && car.Forward.FlatAngle(car.Location.Direction(target), car.Up) > MathF.PI * 0.6f;
-			AllowDodges = allowDodges;
-			WasteBoost = false;
-
-			Action = null;
-		}
-
-		/// <summary>Initializes a new drive action</summary>
-		/// <param name="target">The destination the car will drive to</param>
 		/// <param name="targetSpeed">The speed we intend to mantain while driving</param>
 		/// <param name="allowDodges">Whether or not we are going to allow dodges to increase speed</param>
 		/// <param name="wasteBoost">>Whether or not we are going to use any amount of boost neccesary to mantain our target speed</param>
-		public Drive(Car car, Vec3 target, float targetSpeed, bool allowDodges, bool wasteBoost)
+		public Drive(Car car, Vec3 target, float targetSpeed = Car.MaxSpeed, bool allowDodges = true, bool wasteBoost = false)
 		{
 			Interruptible = true;
 			Finished = false;

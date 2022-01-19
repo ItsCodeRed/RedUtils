@@ -48,19 +48,11 @@ namespace RedUtils
 		}
 
 		/// <summary>Initializes a new ball instance</summary>
-		public Ball(Vec3 location, Vec3 velocity)
+		public Ball(Vec3 location, Vec3 velocity, Vec3? angularVelocity = null)
 		{
 			this.location = location;
 			this.velocity = velocity;
-			angularVelocity = Vec3.Zero;
-		}
-
-		/// <summary>Initializes a new ball instance</summary>
-		public Ball(Vec3 location, Vec3 velocity, Vec3 angularVelocity)
-		{
-			this.location = location;
-			this.velocity = velocity;
-			this.angularVelocity = angularVelocity;
+			this.angularVelocity = angularVelocity ?? Vec3.Zero;
 		}
 
 		/// <summary>Updates the static properties with new info from the packet</summary>

@@ -28,18 +28,8 @@ namespace RedUtils
 		private int _step = 0;
 
 		/// <summary>Initialize a new dodge action</summary>
-		public Dodge(Vec3 direction)
-		{
-			Interruptible = false;
-			Finished = false;
-
-			Direction = direction;
-			JumpTime = 0.1f;
-		}
-
-		/// <summary>Initialize a new dodge action</summary>
 		/// <param name="jumpTime">How much time we spend jumping before dodging, if we start on the ground</param>
-		public Dodge(Vec3 direction, float jumpTime)
+		public Dodge(Vec3 direction, float jumpTime = 0.1f)
 		{
 			Interruptible = false;
 			Finished = false;

@@ -25,36 +25,16 @@ namespace RedUtils
 		/// <summary>The inputs for the dodge direction</summary>
 		private Vec3 _input = Vec3.Zero;
 
-		/// <summary>Initialize a new wavedash action
-		/// <para>Since no directin is given, we will just dash in the direction the car is already going</para>
-		/// </summary>
-		public Wavedash()
-		{
-			Interruptible = false;
-			Finished = false;
-
-			Direction = Vec3.Zero;
-			JumpTime = 0.05f;
-		}
-
 		/// <summary>Initialize a new wavedash action</summary>
-		public Wavedash(Vec3 direction)
-		{
-			Interruptible = false;
-			Finished = false;
-
-			Direction = direction;
-			JumpTime = 0.05f;
-		}
-
-		/// <summary>Initialize a new wavedash action</summary>
+		/// <param name="direction">The direction which we will attempt to dash in.
+		/// If null, we will dash in the direction we are already going.</param>
 		/// <param name="jumpTime">How much time we spend jumping before dodging, if we start on the ground</param>
-		public Wavedash(Vec3 direction, float jumpTime)
+		public Wavedash(Vec3? direction = null, float jumpTime = 0.05f)
 		{
 			Interruptible = false;
 			Finished = false;
 
-			Direction = direction;
+			Direction = direction ?? Vec3.Zero;
 			JumpTime = jumpTime;
 		}
 

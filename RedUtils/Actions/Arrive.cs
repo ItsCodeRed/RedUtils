@@ -27,80 +27,21 @@ namespace RedUtils
 		/// <summary>How much time is left before we arrive or this action expires</summary>
 		public float TimeRemaining { get; private set; }
 
-		/// <summary>Initializes a new arrival action, which will face towards a certain direction, but will not arrive at a specific time (and will try not to waste boost while getting there)</summary>
-		/// <param name="direction">The direction the car will try to face at the time of arrival</param>
-		public Arrive(Car car, Vec3 target, Vec3 direction)
-		{
-			Interruptible = true;
-			Finished = false;
-
-			Target = target;
-			Direction = direction;
-			ArrivalTime = -1;
-			AllowFlipping = true;
-			Drive = new Drive(car, Target, Car.MaxSpeed, AllowFlipping, false);
-			RecoveryTime = 0;
-		}
-
-		/// <summary>Initializes a new arrival action, which has a specific time of arrival, but no direction to face at arrival</summary>
-		public Arrive(Car car, Vec3 target, float arrivalTime)
-		{
-			Interruptible = true;
-			Finished = false;
-
-			Target = target;
-			Direction = Vec3.Zero;
-			ArrivalTime = arrivalTime;
-			AllowFlipping = true;
-			Drive = new Drive(car, Target, Car.MaxSpeed, AllowFlipping, true);
-			RecoveryTime = 0;
-		}
-
-		/// <summary>Initializes a new arrival action, which has a specific time of arrival, and a direction to face at arrival</summary>
-		/// <param name="direction">The direction the car will try to face at the time of arrival</param>
-		public Arrive(Car car, Vec3 target, Vec3 direction, float arrivalTime)
-		{
-			Interruptible = true;
-			Finished = false;
-
-			Target = target;
-			Direction = direction;
-			ArrivalTime = arrivalTime;
-			AllowFlipping = true;
-			Drive = new Drive(car, Target, Car.MaxSpeed, AllowFlipping, true);
-			RecoveryTime = 0;
-		}
-
-		/// <summary>Initializes a new arrival action, wwhich has a specific time of arrival, and a direction to face at arrival</summary>
-		/// <param name="direction">The direction the car will try to face at the time of arrival</param>
-		/// <param name="allowDodges">Whether or not we are going to allow dodges to increase speed</param>
-		public Arrive(Car car, Vec3 target, Vec3 direction, float arrivalTime, bool allowFlipping)
-		{
-			Interruptible = true;
-			Finished = false;
-
-			Target = target;
-			Direction = direction;
-			ArrivalTime = arrivalTime;
-			AllowFlipping = allowFlipping;
-			Drive = new Drive(car, Target, Car.MaxSpeed, AllowFlipping, true);
-			RecoveryTime = 0;
-		}
-
-		/// <summary>Initializes a new arrival action, wwhich has a specific time of arrival, and a direction to face at arrival</summary>
-		/// <param name="direction">The direction the car will try to face at the time of arrival</param>
-		/// <param name="allowDodges">Whether or not we are going to allow dodges to increase speed</param>
+		/// <summary>Initializes a new arrival action.</summary>
+		/// <param name="direction">The direction the car will try to face at the time of arrival. If null, any direction is allowed.</param>
+		/// <param name="arrivalTime">The specific time of arrival. If negative, it will not be a specific time and we will not waste boost getting there.</param>
+		/// <param name="allowFlipping">Whether or not we are going to allow dodges to increase speed</param>
 		/// <param name="recoveryTime">How much time we should give the car to recover before arriving</param>
-		public Arrive(Car car, Vec3 target, Vec3 direction, float arrivalTime, bool allowFlipping, float recoveryTime)
+		public Arrive(Car car, Vec3 target, Vec3? direction = null, float arrivalTime = -1f, bool allowFlipping = true, float recoveryTime = 0f)
 		{
 			Interruptible = true;
 			Finished = false;
 
 			Target = target;
-			Direction = direction;
+			Direction = direction ?? Vec3.Zero;
 			ArrivalTime = arrivalTime;
 			AllowFlipping = allowFlipping;
-			Drive = new Drive(car, Target, Car.MaxSpeed, AllowFlipping, true);
+			Drive = new Drive(car, Target, Car.MaxSpeed, AllowFlipping, arrivalTime >= 0f);
 			RecoveryTime = recoveryTime;
 		}
 

@@ -20,80 +20,34 @@ namespace RedUtils
 		/// <summary>Whether or not this action was initially set as interruptible</summary>
 		private readonly bool _initiallyInterruptible = true;
 
-		/// <summary>Initializes a GetBoost action without a targeted boost pad index, so it will attempt to find the best big boost pad automatically</summary>
-		public GetBoost(Car car)
-		{
-			Finished = false;
-			Interruptible = true;
-
-			float fastestEta = 99;
-			// Loop through all large boost pads, and finds the one we can get to soonest
-			foreach (Boost boost in Field.Boosts)
-			{
-				if (!boost.IsLarge)
-					continue;
-
-				// Calculates how long it will take to get the boost
-				float eta = Drive.GetEta(car, boost.Location);
-				// If we can get there fastest, and it will be active when we get there, we choose it as our new fastest!
-				if (eta < fastestEta && (boost.IsActive || boost.TimeUntilActive < eta))
-				{
-					fastestEta = eta;
-					BoostIndex = boost.Index;
-				}
-			}
-
-			ChosenBoost = Field.Boosts[BoostIndex];
-			DriveAction = new Drive(car, ChosenBoost.Location, Car.MaxSpeed, true, ChosenBoost.IsLarge);
-		}
-
-		/// <summary>Initializes a GetBoost action without a targeted boost pad index, so it will attempt to find the best big boost pad automatically</summary>
+		/// <summary>Initializes a GetBoost.</summary>
+		/// <param name="boostIndex">Index of boost pad to go for. If set to -1 it will attempt to find the best big boost pad automatically</param>
 		/// <param name="interruptible">Whether or not this shot can be interrupted</param>
-		public GetBoost(Car car, bool interruptible)
+		public GetBoost(Car car, int boostIndex = -1, bool interruptible = true)
 		{
 			Finished = false;
 			Interruptible = interruptible;
 			_initiallyInterruptible = interruptible;
 
-			float fastestEta = 99;
-			// Loop through all large boost pads, and finds the one we can get to soonest
-			foreach (Boost boost in Field.Boosts)
+			if (boostIndex == -1)
 			{
-				if (!boost.IsLarge)
-					continue;
-
-				// Calculates how long it will take to get the boost
-				float eta = Drive.GetEta(car, boost.Location);
-				// If we can get there fastest, and it will be active when we get there, we choose it as our new fastest!
-				if (eta < fastestEta && (boost.IsActive || boost.TimeUntilActive < eta))
+				float fastestEta = 999;
+				// Loop through all large boost pads, and finds the one we can get to soonest
+				foreach (Boost boost in Field.Boosts)
 				{
-					fastestEta = eta;
-					BoostIndex = boost.Index;
+					if (!boost.IsLarge)
+						continue;
+
+					// Calculates how long it will take to get the boost
+					float eta = Drive.GetEta(car, boost.Location);
+					// If we can get there fastest, and it will be active when we get there, we choose it as our new fastest!
+					if (eta < fastestEta && (boost.IsActive || boost.TimeUntilActive < eta))
+					{
+						fastestEta = eta;
+						boostIndex = boost.Index;
+					}
 				}
 			}
-
-			ChosenBoost = Field.Boosts[BoostIndex];
-			DriveAction = new Drive(car, ChosenBoost.Location, Car.MaxSpeed, true, ChosenBoost.IsLarge);
-		}
-
-		/// <summary>Initializes a GetBoost action with a targeted boost pad index</summary>
-		public GetBoost(Car car, int boostIndex)
-		{
-			Finished = false;
-			Interruptible = true;
-
-			BoostIndex = boostIndex;
-			ChosenBoost = Field.Boosts[BoostIndex];
-			DriveAction = new Drive(car, ChosenBoost.Location, Car.MaxSpeed, true, ChosenBoost.IsLarge);
-		}
-
-		/// <summary>Initializes a GetBoost action with a targeted boost pad index</summary>
-		/// <param name="interruptible">Whether or not this shot can be interrupted</param>
-		public GetBoost(Car car, int boostIndex, bool interruptible)
-		{
-			Finished = false;
-			Interruptible = interruptible;
-			_initiallyInterruptible = interruptible;
 
 			BoostIndex = boostIndex;
 			ChosenBoost = Field.Boosts[BoostIndex];

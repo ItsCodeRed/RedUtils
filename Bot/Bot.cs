@@ -33,7 +33,7 @@ namespace Bot
                     goingForKickoff = goingForKickoff && Me.Location.Dist(Ball.Location) <= teammate.Location.Dist(Ball.Location);
                 }
 
-                Action = goingForKickoff ? new Kickoff() : new GetBoost(Me, false); // if we aren't going for the kickoff, get boost
+                Action = goingForKickoff ? new Kickoff() : new GetBoost(Me, interruptible: false); // if we aren't going for the kickoff, get boost
             }
             else if (Action == null || (Action is Drive && Action.Interruptible))
             {

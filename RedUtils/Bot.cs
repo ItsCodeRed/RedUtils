@@ -155,9 +155,10 @@ namespace RedUtils
 
 				// If the ball hasn't been touched, set it to -1, so we don't get errors.
 				float latestTouchTime = Ball.LatestTouch == null ? -1 : Ball.LatestTouch.Time; 
-				if (Action.Finished || (_lastTouchTime != latestTouchTime && Action.Interruptible)) 
+				if (Action.Finished || (_lastTouchTime != latestTouchTime && Action.Interruptible) || Me.IsDemolished) 
 				{
-					// If the action has completed, or the ball has been touched and the action is interruptible, reset the action
+					// If the action has completed, or the ball has been touched and the action is interruptible,
+					// or if our bot is demolished reset the action
 					_lastTouchTime = latestTouchTime;
 					Action = null;
 				}

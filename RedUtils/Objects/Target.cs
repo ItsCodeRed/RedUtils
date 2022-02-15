@@ -3,7 +3,7 @@ using RedUtils.Math;
 
 namespace RedUtils
 {
-	/// <summary>Represents a target to be shot at</summary>
+	/// <summary>Represents a target to be shot at or away from</summary>
 	public class Target
 	{
 		/// <summary>The minimum room for error for any shot. 
@@ -25,6 +25,7 @@ namespace RedUtils
 		public Surface TargetSurface;
 
 		/// <summary>Initiliazes a new target using the top left and bottom right points
+		/// <para>If the ball is behind the target, then we will attempt to shoot it away from the target.</para>
 		/// <para>Note that the ball has to fit between the points, meaning the horizontal and vertical distance between the points has to be > 186.3f</para>
 		/// </summary>
 		public Target(Vec3 topLeft, Vec3 bottomRight)
@@ -37,10 +38,19 @@ namespace RedUtils
 		}
 
 		/// <summary>Initiliazes a new target using a goal object</summary>
-		public Target(Goal goal)
+		public Target(Goal goal, bool shootAwayFromGoal = false)
 		{
-			TopLeft = goal.TopLeftCorner;
-			BottomRight = goal.BottomRightCorner;
+			if (shootAwayFromGoal)
+			{
+				// Swap top left and bottom right
+				TopLeft = goal.BottomRightCorner;
+				BottomRight = goal.TopLeftCorner;
+			}
+			else
+			{
+				TopLeft = goal.TopLeftCorner;
+				BottomRight = goal.BottomRightCorner;
+			}
 			TargetSurface = new Surface("target", (TopLeft + BottomRight) / 2 + Vec3.Y * Field.Side(goal.Team) * Ball.Radius, -Vec3.Y * Field.Side(goal.Team),
 							new Vec3(MathF.Max(TopLeft.FlatDist(BottomRight) - Ball.Radius * 2, 1), MathF.Max(MathF.Abs(TopLeft.z - BottomRight.z) - Ball.Radius * 2, 1)),
 							(TopLeft - BottomRight).FlatNorm(), Vec3.Up);

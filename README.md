@@ -48,7 +48,7 @@ your bot will work right in the next tournament!
 - Bot name, description, etc, is configured by `Bot.cfg`
 - Bot strategy is controlled by `Bot/Bot.cs`
 - Bot appearance is controlled by `Loadouts/loadout_generator.py`
-- To make your bot run as fast as possible, build it in release mode, and then change the "executable_path" in `Bot.cfg` to `./Bot/bin/Release/net5.0/Bot.exe`
+- To make your bot run as fast as possible, build it in release mode, and then change the "executable_path" in `Bot.cfg` to `./Bot/bin/Release/net6.0/Bot.exe`
 - See the [wiki](https://github.com/RLBot/RLBotCSharpExample/wiki) for tips to improve your programming experience.
 - If you'd like to keep up with bot strategies and bot tournaments, join our [Discord server](https://discord.gg/q9pbsWz). It's the heart of the RLBot community!
 
